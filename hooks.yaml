@@ -4,3 +4,9 @@
     entry: csv-formatter
     language: python
     files: \.csv$
+-   id: scalariform
+    name: scalariform
+    description: "Runs scalariform scala formatter."
+    entry: pre_commit_hooks/scalariform.sh
+    language: script
+    files: \.scala$
