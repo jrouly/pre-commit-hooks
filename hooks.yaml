@@ -1,0 +1,6 @@
+-   id: csv-formatter
+    name: CSV Formatter
+    description: "Consistently formats CSV files."
+    entry: csv-formatter
+    language: python
+    files: \.csv$
