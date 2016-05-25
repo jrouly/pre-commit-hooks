@@ -14,7 +14,4 @@ then
   TEMPLATE="default"
 fi
 
->&2 echo $TEMPLATE
->&2 echo $FILES
-
 java -jar "$DIR/scalariform/scalariform-0.1.8.jar" --preferenceFile="$DIR/scalariform/templates/$TEMPLATE.properties" $FILES
