@@ -1,2 +1,8 @@
+# Python
 __pycache__
 *.pyc
+
+# IntelliJ Idea
+.idea
+*.iml
+
