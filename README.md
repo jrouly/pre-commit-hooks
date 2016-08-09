@@ -6,7 +6,7 @@ Useful pre-commit-hooks for use with [Yelp's pre-commit](https://github.com/pre-
 Add a `.pre-commit-config.yaml` to your repository. e.g.:
 
 ```
--   repo: git@github.com:AudaxHealthInc/pre-commit-hooks-rally.git
+-   repo: git@github.com:AudaxHealthInc/pre-commit-hooks.git
     sha: ...
     hooks:
     -   id: ...
