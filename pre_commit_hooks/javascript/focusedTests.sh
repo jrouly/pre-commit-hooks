@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Don't commit focused tests. Use this as a pre-commit hook and the commit won't succeed if you have staged changes
 # that contain `fdescribe`, `fcontext`, `fit`, `fspecify` or `fexample`
