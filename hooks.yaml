@@ -13,6 +13,6 @@
 -   id: js-focused-tests
     name: Javascript Focused Tests
     description: "Searches for any focused Javascript tests in the staged files."
-    entry: pre_commit_hooks/focusedTests.sh
+    entry: pre_commit_hooks/javascript/focusedTests.sh
     language: script
     files: \.js$
