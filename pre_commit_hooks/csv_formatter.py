@@ -11,7 +11,12 @@ def format_csv(file_obj, delimiter, quotechar, quoting):
     Consistently apply quoting in a csv file.
     """
 
-    reader = csv.reader(file_obj, delimiter=delimiter, quotechar=quotechar)
+    reader = csv.reader(
+        file_obj,
+        skipinitialspace=True,
+        delimiter=delimiter,
+        quotechar=quotechar
+    )
     writer = csv.writer(
         file_obj,
         delimiter=delimiter,
