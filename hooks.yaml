@@ -4,12 +4,21 @@
     entry: csv-formatter
     language: python
     files: \.csv$
+
 -   id: scalariform
     name: Scalariform
     description: "Runs scalariform scala formatter."
     entry: pre_commit_hooks/scalariform.sh
     language: script
     files: \.scala$
+
+-   id: scalafmt
+    name: scalafmt
+    description: "Runs scalafmt scala formatter."
+    entry: pre_commit_hooks/scalafmt.sh
+    language: script
+    files: \.scala$
+
 -   id: js-focused-tests
     name: Javascript Focused Tests
     description: "Searches for any focused Javascript tests in the staged files."
