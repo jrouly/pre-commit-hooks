@@ -26,7 +26,8 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'csv-formatter = pre_commit_hooks.csv_formatter:csv_formatter'
+            'csv-formatter = pre_commit_hooks.csv_formatter:csv_formatter',
+            'google-java-format = google_java_format.sh'
         ],
     },
 )
