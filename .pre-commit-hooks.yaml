@@ -4,3 +4,9 @@
     entry: csv-formatter
     language: python
     files: \.csv$
+-   id: google-java-format
+    name: Google's Java Format
+    description: "Format Java code using the google-java-format tool."
+    entry: pre_commit_hooks/google-java-format.sh
+    language: script
+    files: \.java$
