@@ -36,7 +36,7 @@ def format_csv(file_obj, delimiter, quotechar, quoting):
     rows = [row for row in reader]
     file_obj.seek(0, 0)
     writer.writerows(rows)
-
+    file_obj.truncate()
     return 0
 
 
