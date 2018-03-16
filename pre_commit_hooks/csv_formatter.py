@@ -33,11 +33,15 @@ def format_csv(file_obj, delimiter, quotechar, quoting):
         lineterminator=os.linesep
     )
 
-    rows = [row for row in reader]
+    rows = [format_row(row) for row in reader]
+    
     file_obj.seek(0, 0)
     writer.writerows(rows)
     file_obj.truncate() # if the BOM got stripped there may be some characters left over in the file.
     return 0
+
+def format_row(row):
+    return [cell.strip() for cell in row]
 
 
 def csv_formatter(argv=None):
