@@ -25,3 +25,10 @@
     entry: pre_commit_hooks/javascript/focusedTests.sh
     language: script
     files: \.js$
+
+-   id: prettier
+    name: Prettier
+    description: "Runs prettier javascript formatter."
+    entry: pre_commit_hooks/javascript/prettier.sh
+    language: script
+    files: \.js$
