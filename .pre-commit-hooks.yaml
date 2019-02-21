@@ -19,6 +19,13 @@
     language: script
     files: \.scala$
 
+-   id: scalastyle
+    name: Check ScalaStyle
+    description: "Runs scalastyle scala formatter."
+    entry: pre_commit_hooks/scalastyle.sh
+    language: script
+    files: \.scala$
+
 -   id: js-focused-tests
     name: Javascript Focused Tests
     description: "Searches for any focused Javascript tests in the staged files."
