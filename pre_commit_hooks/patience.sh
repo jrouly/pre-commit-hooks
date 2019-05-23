@@ -4,10 +4,10 @@
 EXIT_CODE=0 # Mutated to 1 if naughty.
 
 for FILE in "$@"; do
-    PATIENCE_SUBCLASS=$(grep -o -E '(?:extends|with)\s+(Waiters|Eventually|Conductors|ScalaFutures)' $FILE)
+    PATIENCE_SUBCLASS=$(grep -o -E '(extends|with)\s+(Waiters|Eventually|Conductors|ScalaFutures)' $FILE)
     USES_PATIENCE=$?
 
-    if test "$USES_PATIENCE" = "0" && ! grep -E '(?:extends|with)\s+(?:IntegrationPatience)' $FILE > /dev/null; then
+    if test "$USES_PATIENCE" = "0" && ! grep -E '(extends|with)\s+(IntegrationPatience)' $FILE > /dev/null; then
         echo "$FILE $PATIENCE_SUBCLASS"
         EXIT_CODE=1
     fi
