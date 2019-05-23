@@ -39,3 +39,11 @@
     entry: pre_commit_hooks/javascript/prettier.sh
     language: script
     files: \.js$
+
+-   id: scalatest-integration-patience
+    name: ScalaTest IntegrationPatience
+    description: "Enforces that any ScalaTests that use timeouts also use IntegrationPatience so that tests are not flaky."
+    entry: pre_commit_hooks/patience.sh
+    language: script
+    files: src/test/.*\.scala$
+
