@@ -6,5 +6,5 @@ then
   echo "prettier is not installed. pre-commit hook cannot run."
   exit 1
 else
-  prettier --write 'src/**/*.js'
+  prettier --write 'src/**/*.+(js|jsx|ts|tsx)'
 fi
