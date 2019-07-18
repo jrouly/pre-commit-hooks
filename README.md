@@ -41,22 +41,24 @@ If project has `scalastyle-config.xml` in the project folder, example [`project/
     -   id: scalastyle
 ```
 
-
 The `args` block is optional.
 If present, pass the name of a template file stored in `pre_commit_hooks/scalariform/templates/`.
 If it's not present, Scalariform will fall back to the default template.
 
-##### scalafmt
+##### [scalafmt](http://scalameta.org/scalafmt/)
 An opinionated code formatter for Scala.
-
-http://scalameta.org/scalafmt/
 
 ```yaml
     hooks:
     -   id: scalafmt
+        args: [--conf-name=default.conf]
 ```
 
-[`.scalafmt.conf`](http://scalameta.org/scalafmt/#Configuration) in the project's root directory will be used for configuration if present.
+The `args` block is optional.
+If present, pass the name of a conf stored in `pre_commit_hooks/scalafmt/conf/<confname>/<confversion>` .
+If it's not present, scalafmt will fall back to default.conf.
+
+Info on adding config files can be found [here](./pre_commit_hooks/scalafmt/conf/README.md).
 
 ### Testing 
 - Go to your repo with pre-commit
