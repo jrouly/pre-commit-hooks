@@ -51,19 +51,8 @@ then
   exit 1
 fi
 
-
 # Copy scalafmt config to app directory
-# If file exists and differs from existing pre-commit config file, fail
-# This ensures formatting is not fighting between intellij and pre-commit while avoiding overwriting app configs
-APP_CONF=$(git rev-parse --show-toplevel)/.scalafmt.conf
-if ! cp -n $CONF_FILE $APP_CONF && ! cmp --silent $CONF_FILE $APP_CONF
-then
-  echo "Repository already contains .scalafmt.conf"
-  echo "Please remove the existing .scalafmt.conf before enabling the scalafmt pre-commit-hook"
-  exit 1
-fi
-
-COMMA_SEP_FILES=$(echo $FILES | sed -Ee 's/ +/\,/g')
+cp -f $CONF_FILE $(git rev-parse --show-toplevel)/.scalafmt.conf
 
 # If running on mac os, use darwin binary, else use linux binary
 if uname | grep "Darwin" > /dev/null
@@ -73,4 +62,4 @@ else
   SCALAFMT=scalafmt-native-linux-2.0.0
 fi
 
-$DIR/scalafmt/$SCALAFMT -c $CONF_FILE -i -f $COMMA_SEP_FILES
+$DIR/scalafmt/$SCALAFMT -c $CONF_FILE -i -f $FILES
