@@ -34,14 +34,17 @@ def format_csv(file_obj, delimiter, quotechar, quoting):
     )
 
     rows = [format_cells(row) for row in reader]
-    
+
     file_obj.seek(0, 0)
     writer.writerows(rows)
-    file_obj.truncate() # if the BOM got stripped there may be some characters left over in the file.
+    # if the BOM got stripped there may be some characters left over in the file.
+    file_obj.truncate()
     return 0
+
 
 def format_cells(row):
     return [cell.strip() for cell in row]
+
 
 def csv_formatter(argv=None):
     parser = argparse.ArgumentParser()

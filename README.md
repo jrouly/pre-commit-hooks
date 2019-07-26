@@ -58,12 +58,12 @@ The `args` block is optional.
 If present, pass the name of a conf stored in `pre_commit_hooks/scalafmt/conf/<confname>/<confversion>` .
 If it's not present, scalafmt will fall back to default.conf.
 
-If there is a .scalafmt.conf in the consuming repo, it will be overwritten. This ensures intellij and pre-commit 
+If there is a .scalafmt.conf in the consuming repo, it will be overwritten. This ensures intellij and pre-commit
 are both formatting files the same way.
 
 Info on adding config files can be found [here](./pre_commit_hooks/scalafmt/conf/README.md).
 
-### Testing 
+### Testing
 - Go to your repo with pre-commit
 - Run `pre-commit try-repo ../pre-commit-hooks scalastyle --ref 2ebef2966cee0e5e27e244007bc7677fbcdd4a85  --verbose --all-files`
   - `--ref` is reference to `git sha` of your changes

@@ -46,4 +46,3 @@
     entry: pre_commit_hooks/patience.sh
     language: script
     files: test/.*\.scala$
-

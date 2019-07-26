@@ -1,16 +1,17 @@
--   repo: https://github.com/pre-commit/pre-commit-hooks
-    sha: v0.8.0
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.2.3
     hooks:
-    -   id: trailing-whitespace
-    -   id: end-of-file-fixer
-    -   id: autopep8-wrapper
-    -   id: check-docstring-first
-    -   id: check-json
-    -   id: check-yaml
-    -   id: requirements-txt-fixer
-    -   id: flake8
--   repo: https://github.com/pre-commit/pre-commit
-    sha: v0.14.1
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-docstring-first
+      - id: check-yaml
+      - id: flake8
+  - repo: https://github.com/pre-commit/mirrors-autopep8
+    rev: v1.4.4
     hooks:
-    -   id: validate_config
-    -   id: validate_manifest
+      - id: autopep8
+  - repo: meta
+    hooks:
+      - id: check-hooks-apply
+      - id: check-useless-excludes
