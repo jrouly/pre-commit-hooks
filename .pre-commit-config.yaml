@@ -15,3 +15,10 @@ repos:
     hooks:
       - id: check-hooks-apply
       - id: check-useless-excludes
+  - repo: local
+    hooks:
+      - id: scalafmt-examples
+        name: Generate examples of configs.
+        files: pre_commit_hooks/scalafmt.*$
+        entry: pre_commit_hooks/scalafmt-examples/scalafmt-examples.sh
+        language: script

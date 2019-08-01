@@ -7,6 +7,8 @@ CONF_NAME=default.conf
 
 # Parse args for files and conf name
 FILES=""
+# Flag to disable copying the conf to the root dir.
+COPY_CONF=true
 while (( "$#" )); do
   case "$1" in
     --conf-name=*)
@@ -15,6 +17,9 @@ while (( "$#" )); do
       then
         CONF_NAME="$CONF_NAME.conf"
       fi
+      ;;
+    --no-copy-conf*)
+      COPY_CONF=false
       ;;
     -*|--*=) # unsupported flags
       echo "Error: Unsupported flag $1" >&2
@@ -52,7 +57,9 @@ then
 fi
 
 # Copy scalafmt config to app directory
-cp -f $CONF_FILE $(git rev-parse --show-toplevel)/.scalafmt.conf
+if [[ $COPY_CONF = true ]]; then
+  cp -f $CONF_FILE $(git rev-parse --show-toplevel)/.scalafmt.conf
+fi
 
 # If running on mac os, use darwin binary, else use linux binary
 if uname | grep "Darwin" > /dev/null
