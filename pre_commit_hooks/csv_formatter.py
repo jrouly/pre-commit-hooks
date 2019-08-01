@@ -16,7 +16,9 @@ def format_csv(file_obj, delimiter, quotechar, quoting):
                                             codecs.BOM_UTF16_LE,
                                             codecs.BOM_UTF16_BE,
                                             codecs.BOM_UTF32_LE,
-                                            codecs.BOM_UTF32_BE] if possible_bom.startswith(bom)), 0)
+                                            codecs.BOM_UTF32_BE]
+                       if possible_bom.startswith(bom)
+                       ), 0)
     file_obj.seek(bom_offset, 0)
 
     reader = csv.reader(
@@ -37,7 +39,8 @@ def format_csv(file_obj, delimiter, quotechar, quoting):
 
     file_obj.seek(0, 0)
     writer.writerows(rows)
-    # if the BOM got stripped there may be some characters left over in the file.
+    # if the BOM got stripped there may be some characters left over
+    # in the file.
     file_obj.truncate()
     return 0
 
