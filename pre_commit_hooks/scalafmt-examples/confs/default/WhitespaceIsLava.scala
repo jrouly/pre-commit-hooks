@@ -14,10 +14,11 @@ import scala.concurrent.ExecutionContext
 class WhitespaceIsLava[T <: Any: Ordering: Numeric](
   foo: String = "zomg",
   val bar: Int = 1
-)(implicit executionContext: ExecutionContext,
-  materializer: Unit)
-    extends Comparable[WhitespaceIsLava[T]]
-    with Serializable {
+)(implicit
+  executionContext: ExecutionContext,
+  materializer: Unit
+) extends Comparable[WhitespaceIsLava[T]]
+  with Serializable {
   private val fieldOne: String = ""
   private val fieldTwo: Unit = Unit
   private val fieldThree: Int = 42
