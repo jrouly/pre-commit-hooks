@@ -3,6 +3,9 @@ import scala.concurrent.ExecutionContext
 /**
   * Many engineers prefer that adding a param does not require changing any other lines. It matters for git blame.
   *
+  * Want to test your changes with the formatter? Run ` ./pre_commit_hooks/scalafmt-examples/scalafmt-examples.sh`
+  * from the root of repository checkout.
+  *
   * @param foo stringy string
   * @param bar inty int
   * @param ordering$T enforces pecking order
@@ -54,4 +57,35 @@ class WhitespaceIsLava[T <: Any: Ordering: Numeric](
     param: java.util.concurrent.ScheduledThreadPoolExecutor,
     names: java.util.concurrent.ScheduledThreadPoolExecutor
   ): Unit = Unit
+  def shortMethod(): Unit = Unit
+
+  def shortMethod(
+    argOne: String
+  ): Unit = Unit
+
+  def shortMethod(
+    argOne: String,
+    argTwo: String
+  ): Unit = Unit
+
+  def multipleArgLists(
+    argOne: String
+  )(
+    argTwo: String
+  )(
+    argThree: String
+  ): Unit = Unit
+
+  def multipleArgLists(
+    argOne: String
+  )(
+    argTwo: String
+  )(
+    argThree: String
+  )(implicit
+    argFour: String
+  ): Unit = Unit
+
+  /** DocString should have a blank line above it. */
+  def shortMethod(): Unit = Unit
 }

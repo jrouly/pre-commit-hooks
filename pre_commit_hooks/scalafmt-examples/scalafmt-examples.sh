@@ -1,5 +1,9 @@
 #!/bin/bash -eu
 
+if [ ! -d "pre_commit_hooks" ]; then
+    echo "Cannot find 'pre_commit_hooks' -- this must be run from the root of the 'pre_commit_hooks' checkout" 1>&2
+    exit 1
+fi
 # For each conf, copy ugly templates and format them.
 for CONF_FILE in $(find pre_commit_hooks/scalafmt/conf -name '*.conf'); do
     CONF_NAME="$(basename $CONF_FILE .conf)" # => "connect"
