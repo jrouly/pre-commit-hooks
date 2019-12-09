@@ -14,7 +14,7 @@ import scala.concurrent.ExecutionContext
   * @param materializer absolute [[Unit]] of a construct
   * @tparam T "T" is to type params, what "i" is to for loops.
   */
-class WhitespaceIsLava[T <: Any: Ordering: Numeric](
+class WhitespaceIsLava[T <: Any : Ordering : Numeric](
   foo: String = "zomg",
   val bar: Int = 1
 )(implicit
@@ -26,9 +26,7 @@ class WhitespaceIsLava[T <: Any: Ordering: Numeric](
   private val fieldTwo: Unit = Unit
   private val fieldThree: Int = 42
   private implicit val fieldFour: NullPointerException = new NullPointerException
-  override def compareTo(
-    o: WhitespaceIsLava[T]
-  ): Int = this.bar.compareTo(o.bar)
+  override def compareTo(o: WhitespaceIsLava[T]): Int = this.bar.compareTo(o.bar)
   override def toString: String =
     new StringBuilder()
       .append("yOu")
@@ -42,9 +40,7 @@ class WhitespaceIsLava[T <: Any: Ordering: Numeric](
       .result()
   def line81: String = "This line is exactly" + "81 chars long after formatting"
 
-  def caseLove(
-    love: Int
-  ): Boolean = love match {
+  def caseLove(love: Int): Boolean = love match {
     case 8675309 => true
     case 42 => true
     case 0 => true
@@ -58,38 +54,20 @@ class WhitespaceIsLava[T <: Any: Ordering: Numeric](
     names: java.util.concurrent.ScheduledThreadPoolExecutor
   ): Unit = Unit
   def shortMethod(): Unit = Unit
-
-  def shortMethod(
-    argOne: String
-  ): Unit = Unit
+  def shortMethod(argOne: String): Unit = Unit
 
   def shortMethod(
     argOne: String,
     argTwo: String
   ): Unit = Unit
-
-  def multipleArgLists(
-    argOne: String
-  )(
-    argTwo: String
-  )(
-    argThree: String
-  ): Unit = Unit
-
-  def multipleArgLists(
-    argOne: String
-  )(
-    argTwo: String
-  )(
-    argThree: String
-  )(implicit
-    argFour: String
-  ): Unit = Unit
+  def multipleArgLists(argOne: String)(argTwo: String)(argThree: String): Unit = Unit
+  def multipleArgLists(argOne: String)(argTwo: String)(argThree: String)(implicit argFour: String): Unit = Unit
 
   /** DocString should have a blank line above it. */
   def shortMethod(): Unit = Unit
 
   /** Redundant braces removes braces */
-  def bracesGone(): Unit =
+  def bracesGone(): Unit = {
     Unit
+  }
 }

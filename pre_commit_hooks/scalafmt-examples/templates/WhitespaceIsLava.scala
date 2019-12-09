@@ -36,4 +36,9 @@ def multipleArgLists(argOne:String)(argTwo:String)(argThree:String):Unit=Unit
 def multipleArgLists(argOne:String)(argTwo:String)(argThree:String)(implicit argFour:String):Unit=Unit
 /** DocString should have a blank line above it. */
 def shortMethod():Unit=Unit
+
+/** Redundant braces removes braces */
+def bracesGone():Unit = {
+  Unit
+}
 }
