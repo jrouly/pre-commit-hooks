@@ -11,7 +11,7 @@ def format_csv(file_obj, delimiter, quotechar, quoting):
     """
     Consistently apply quoting in a csv file.
     """
-    possible_bom = file_obj.read(4)
+    possible_bom = bytes(file_obj.read(4), 'utf-8')
     bom_offset = next((len(bom) for bom in [codecs.BOM_UTF8,
                                             codecs.BOM_UTF16_LE,
                                             codecs.BOM_UTF16_BE,
@@ -50,6 +50,10 @@ def format_cells(row):
 
 
 def csv_formatter(argv=None):
+    if sys.version_info[0] < 3:
+        print('Stop using software that is past EOL. Upgrade to Python 3!')
+        sys.exit(1)
+
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to quote')
     parser.add_argument('--delimiter', help='CSV delimiter', default=',')
@@ -61,7 +65,7 @@ def csv_formatter(argv=None):
     retv = 0
 
     for filename in args.filenames:
-        with open(filename, 'rU+') as file_obj:
+        with open(filename, 'r+') as file_obj:
             ret_for_file = format_csv(
                 file_obj, args.delimiter, args.quotechar, args.quoting)
             if ret_for_file:
