@@ -23,15 +23,6 @@ Formats CSVs by applying a consistent quoting standard.
     -   id: csv-formatter
 ```
 
-##### scalariform
-Formats Scala code by applying a set of customizable rules.
-
-```yaml
-    hooks:
-    -   id: scalariform
-        args: [templatename]
-```
-
 ##### [scalastyle](http://www.scalastyle.org/)
 Scala style checker.
 If project has `scalastyle-config.xml` in the project folder, example [`project/scalastyle-config.xml`](https://github.com/AudaxHealthInc/proton/project/scalastyle-config.xml) the script will use that config file, otherwise it will use the provided [default config](./pre_commit_hooks/scalastyle/configs/default.xml)
@@ -62,6 +53,18 @@ If there is a .scalafmt.conf in the consuming repo, it will be overwritten. This
 are both formatting files the same way.
 
 Info on adding config files can be found [here](./pre_commit_hooks/scalafmt/conf/README.md).
+
+##### scalariform
+(**Note**: scalariform is no longer well-maintained, and is expected to reach end of life when Scala 3 lands.
+At this point, we recommend using scalafmt instead.)
+
+Formats Scala code by applying a set of customizable rules.
+
+```yaml
+    hooks:
+    -   id: scalariform
+        args: [templatename]
+```
 
 ### Testing
 - Go to your repo with pre-commit
