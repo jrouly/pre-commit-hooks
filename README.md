@@ -54,7 +54,7 @@ are both formatting files the same way.
 
 Info on adding config files can be found [here](./pre_commit_hooks/scalafmt/conf/README.md).
 
-##### scalariform
+##### scalariform ❌
 | :warning: scalariform is no longer well-maintained, and is expected to reach the end of life when Scala 3 lands. At this point, we recommend using scalafmt instead. |
 |-----|
 
