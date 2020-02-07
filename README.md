@@ -42,11 +42,11 @@ An opinionated code formatter for Scala.
 ```yaml
     hooks:
     -   id: scalafmt
-        args: [--conf-name=default.conf]
+        args: [--conf-name=default]
 ```
 
 The `args` block is optional.
-If present, pass the name of a conf stored in `pre_commit_hooks/scalafmt/conf/<confname>/<confversion>` .
+If present, pass the name of a conf stored in `pre_commit_hooks/scalafmt/conf/<confname>.conf` .
 If it's not present, scalafmt will fall back to default.conf.
 
 If there is a .scalafmt.conf in the consuming repo, it will be overwritten. This ensures intellij and pre-commit
