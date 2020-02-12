@@ -1,4 +1,15 @@
-#!/bin/bash -eu
+#!/bin/bash
+# http://redsymbol.net/articles/unofficial-bash-strict-mode/
+set -euo pipefail
+
+##############################################################################
+# Runs "scalafmt.sh" on each configuration defined in "scalafmt/conf" on the
+# Scala files in "templates" -- outputting the results into similarly named
+# directories in "confs" -- so you can see the changes.
+#
+# Usage:
+#   ./scalafmt-examples.sh
+##############################################################################
 
 if [ ! -d "pre_commit_hooks" ]; then
     echo "Cannot find 'pre_commit_hooks' -- this must be run from the root of the 'pre_commit_hooks' checkout" 1>&2
