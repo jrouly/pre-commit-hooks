@@ -57,8 +57,9 @@ then
 fi
 
 # Copy scalafmt config to app directory
-if [[ $COPY_CONF = true ]]; then
-  cp -f $CONF_FILE $(git rev-parse --show-toplevel)/.scalafmt.conf
+REPO_CONF_FILE=$(git rev-parse --show-toplevel)/.scalafmt.conf
+if [[ $COPY_CONF = true && $(diff $CONF_FILE $REPO_CONF_FILE ) ]]; then
+  cp -f $CONF_FILE $REPO_CONF_FILE
 fi
 
 # If running on mac os, use darwin binary, else use linux binary
