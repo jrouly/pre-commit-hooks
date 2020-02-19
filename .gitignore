@@ -5,3 +5,7 @@ __pycache__
 # IntelliJ Idea
 .idea
 *.iml
+
+# Coursier CLI (see pre_commit_hooks/scalafmt.sh)
+.cache/coursier/
+coursier-*
