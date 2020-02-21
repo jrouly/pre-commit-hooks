@@ -113,7 +113,7 @@ function run_scalafmt() {
 
   # Copy scalafmt config to app directory
   REPO_CONF_FILE=$(git rev-parse --show-toplevel)"/.scalafmt.conf"
-  if [[ $COPY_CONF == true && $(diff "$CONF_FILE_PATH" "$REPO_CONF_FILE") ]]; then
+  if [[ $COPY_CONF == true && -f "$REPO_CONF_FILE" && $(diff "$CONF_FILE_PATH" "$REPO_CONF_FILE") ]]; then
     cp -f "$CONF_FILE_PATH" "$REPO_CONF_FILE"
   fi
 
