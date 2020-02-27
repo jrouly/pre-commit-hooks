@@ -6,6 +6,5 @@ __pycache__
 .idea
 *.iml
 
-# Coursier CLI (see pre_commit_hooks/scalafmt.sh)
+# Coursier cache (see pre_commit_hooks/scalafmt.sh)
 .cache/coursier/
-coursier-*

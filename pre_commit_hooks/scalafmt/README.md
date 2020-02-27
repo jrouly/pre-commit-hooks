@@ -41,15 +41,19 @@ For example if you add `conf/foo.conf` you need to update the scalafmt hook in `
 
 # Updating scalafmt Version
 
-1. Remove the old `scalafmt` versions [here](/), e.g.
+We run `scalafmt` using [`coursier`](https://get-coursier.io/), so when you update `scalafmt` you should probably
+update `coursier` at the same time:
+
+1. Remove the old `coursier` and `scalafmt` versions [here](/), e.g.
      ```shell
      $ git rm scalafmt-*
-     rm 'pre_commit_hooks/scalafmt/scalafmt-x.y.z'
+     rm 'pre_commit_hooks/scalafmt/coursier-*'
+     rm 'pre_commit_hooks/scalafmt/scalafmt-*'
      ```
 1. Open [scalafmt.sh](../scalafmt.sh)
-1. Update `SCALA_FMT_VERSION` to the new version
-    1. If necessary you can also update `COURSIER_VERSION` to a newer version
-1. Update the versions in the [configuration files](conf/), e.g.:
+1. Update `COURSIER_VERSION` to the [new version](https://github.com/coursier/coursier/releases)
+1. Update `SCALA_FMT_VERSION` to the [new version](https://github.com/scalameta/scalafmt/releases)
+1. Update the `scalafmt` version in the [configuration files](conf/), e.g.:
     ```hocon
     version = "x.y.z"
     ```
@@ -66,13 +70,12 @@ new version of `scalafmt` (which may also download
    Wrote /.../pre-commit-hooks/pre_commit_hooks/scalafmt/scalafmt-x.y.z
    Formatting with configuration pre_commit_hooks/scalafmt/conf/default.conf ...
      └ pre_commit_hooks/scalafmt-examples/confs/default/WhitespaceIsLava.scala
-   Formatting with configuration pre_commit_hooks/scalafmt/conf/personalization.conf ...
-     └ pre_commit_hooks/scalafmt-examples/confs/personalization/WhitespaceIsLava.scala
+   ...
    ```
-1. Add the new `scalafmt` versions to git, e.g.:
+1. Add the new `coursier` and `scalafmt` versions to git, e.g.:
     ```shell
-    $ git add -v scala-x.y.z
-    add 'pre_commit_hooks/scalafmt/scalafmt-x.y.z'
+    $ git add coursier-*
+    $ git add scalafmt-*
     ```
 1. Commit and push a PR
 

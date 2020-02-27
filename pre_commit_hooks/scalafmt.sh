@@ -21,105 +21,123 @@ set -eu
 # - We intentionally do not keep the file downloaded by coursier's
 ##############################################################################
 
-COURSIER_VERSION=v2.0.0-RC6-8
-COURSIER_URL=https://github.com/coursier/coursier/releases/download/$COURSIER_VERSION/coursier
+COURSIER_VERSION=v2.0.0-RC6-10
+COURSIER_URL="https://github.com/coursier/coursier/releases/download/$COURSIER_VERSION/coursier"
 # We use this version because last time I tried to updated to 2.4.2 it introduced unexpected changes
 SCALAFMT_VERSION=2.0.0
 
-SOURCE_DIR=$(dirname "${BASH_SOURCE[0]}")
-CURR_DIR=$(cd "$SOURCE_DIR" && pwd)
-
-# _most_ systems have TMPDIR, but guess who doesn't? and has CACHE_DIR instead?... JENKINS!!! :rageface:
-TMPDIR=${TMPDIR:-${CACHE_DIR:-"/tmp"}}
-
-SCALAFMT_FOLDER=$CURR_DIR/scalafmt
-CONF_FOLDER=$SCALAFMT_FOLDER/conf
-COURSIER_CLI=$SCALAFMT_FOLDER/coursier-$COURSIER_VERSION
-SCALAFMT_CLI=$SCALAFMT_FOLDER/scalafmt-$SCALAFMT_VERSION
+# https://electrictoolbox.com/bash-script-directory/
+SCALAFMT_SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
+PRE_COMMIT_HOOKS_DIR=$(pushd "$SCALAFMT_SCRIPT_DIR" >/dev/null && pwd && popd >/dev/null)
+SCALAFMT_DIR="$PRE_COMMIT_HOOKS_DIR/scalafmt"
+CONF_DIR="$SCALAFMT_DIR/conf"
+REPO_ROOT_DIR=$(git rev-parse --show-toplevel)
 
 # move the cache somewhere safe to write, as this can fail with the default location on Jenkins
 # this is done here since it is used by both coursier itself and the scalafmt launcher that coursier builds
 # https://get-coursier.io/docs/cache.html#manual-override
-export COURSIER_CACHE="$TMPDIR/coursier"
+export COURSIER_CACHE="$REPO_ROOT_DIR/cache/coursier"
 mkdir -p "$COURSIER_CACHE"
+
+# NOTE: Be very careful with the order of arguments! "courser fetch XXX --foo" != "courser fetch --foo XXX"
+COURSIER_CLI="$SCALAFMT_DIR/coursier-$COURSIER_VERSION"
+SCALAFMT_CLI="$SCALAFMT_DIR/scalafmt-$SCALAFMT_VERSION"
+# name of scalafmt for fetching with coursier
+SCALAFMT_ARTIFACT="org.scalameta:scalafmt-cli_2.12:$SCALAFMT_VERSION"
 
 # -conf-name - configuration file name, default will be overwritten if specified
 CONF_NAME=default.conf
 # --no-copy-conf - Flag to disable copying the conf to the root of the git clone
 COPY_CONF=true
-# Comma separated line of file names within $CURR_DIR
-# This will be parsed from the args for files and conf name
+# Comma separated line of ABSOLUTE file names to format
 FILES=""
 
-# Downloads coursier-cli so we can download scalafmt
+# Checks that coursier CLI exists, and if not, downloads it
 # https://get-coursier.io/docs/cli-overview
-function download_coursier() {
-  if [[ -f $COURSIER_CLI ]]; then return 0; fi
+function check_and_download_coursier() {
+  [[ -f "$COURSIER_CLI" ]] && return
 
-  if [[ -z $(command -v curl) ]]; then
-    echo "cURL is not installed, cannot download coursier" >&2
-    exit 1
-  fi
+  [[ -z $(command -v curl) ]] && (echo "cURL is not installed, cannot download coursier" >&2 && exit 1)
 
   echo "Downloading coursier $COURSIER_VERSION ..." >&2
-  curl --progress-bar --location --output "$COURSIER_CLI" "$COURSIER_URL"
-  chmod +x "$COURSIER_CLI"
+  curl --progress-bar --location --output "$COURSIER_CLI" "$COURSIER_URL" && chmod +x "$COURSIER_CLI"
 }
 
-# Downloads scalafmt so we can run it from the CLI
+# Checks that scalafmt CLI exists, and if not, downloads it
 # https://scalameta.org/scalafmt/docs/installation.html#coursier
-function download_scalafmt() {
-  # check version, if not what we expect halt
-  if [[ -f $SCALAFMT_CLI ]]; then
-    OLD_SCALAFMT_VERSION=$($SCALAFMT_CLI --version)
-    if [[ $OLD_SCALAFMT_VERSION == "scalafmt $SCALAFMT_VERSION" ]]; then
-      return 0
-    else
-      echo "scalafmt exists but is a different version ($OLD_SCALAFMT_VERSION)" >&2
-      exit 1
-    fi
-  else
-    echo "scalafmt $OLD_SCALAFMT_VERSION does not exist, needs to download" >&2
-  fi
-
-  download_coursier
+function check_and_download_scalafmt() {
+  [[ -f "$SCALAFMT_CLI" ]] && return
 
   echo "Downloading scalafmt $SCALAFMT_VERSION using coursier ..." >&2
-  $COURSIER_CLI bootstrap org.scalameta:scalafmt-cli_2.12:"$SCALAFMT_VERSION" \
+  # redirect to /dev/null because it still prints garbage even with --quiet :(
+  "$COURSIER_CLI" bootstrap "$SCALAFMT_ARTIFACT" \
+    --quiet \
     --standalone \
+    --mode missing \
+    --repository central \
     --repository sonatype:snapshots \
-    --force \
+    --keep-optional \
+    --force-fetch \
     --output "$SCALAFMT_CLI" \
-    --main org.scalafmt.cli.Cli
+    --main org.scalafmt.cli.Cli \
+    >/dev/null
+}
 
-  # final version check
-  if [[ $($SCALAFMT_CLI --version) != "scalafmt $SCALAFMT_VERSION" ]]; then
-    echo "scalafmt $SCALAFMT_VERSION did not download correctly" >&2
-    rm -f "$SCALAFMT_CLI".broken && mv "$SCALAFMT_CLI" "$SCALAFMT_CLI".broken
-    exit 1
-  fi
+# If $COPY_CONF is true this copies all config files from "conf" to $REPO_ROOT_DIR and renames "CONF_FILE" to
+# ".scalafmt.conf" so the configs can be used by an IDE plugin
+function copy_configs_to_local() {
+  [[ $COPY_CONF ]] && return
+
+  # Copy all new/changed  configs to app directory (we don't know which ones will be used via "include" so copy them all
+  # we don't try and delete from the repo root because that's too risky to screw up and break something
+  for orig_conf_file in "$CONF_DIR"/*; do
+    local_conf_file="$REPO_ROOT_DIR/$(basename "$orig_conf_file")"
+    if [[ ! -f "$local_conf_file" || $(diff "$orig_conf_file" "$local_conf_file") -ne 0 ]]; then
+      cp -f "$orig_conf_file" "$local_conf_file"
+    fi
+  done
+
+  # rename the SPECIFIED config file as the main one (that's the one the IDE plugin is looking for)
+  mv "$REPO_ROOT_DIR/$CONF_NAME" "$REPO_ROOT_DIR/.scalafmt.conf"
 }
 
 # Executes scalafmt for the config file defined in "CONF_FILE"
 function run_scalafmt() {
   # If there are no files to process, exit
-  if [[ -z $FILES ]]; then return 0; fi
+  [[ -z "$FILES" ]] && return
 
-  local CONF_FILE_PATH="$CONF_FOLDER"/"$CONF_NAME"
-  if [[ ! -f $CONF_FILE_PATH ]]; then
+  local CONF_FILE_PATH="$CONF_DIR"/"$CONF_NAME"
+  if [[ ! -f "$CONF_FILE_PATH" ]]; then
     echo "Invalid conf name supplied: $CONF_FILE_PATH" >&2
     exit 1
   fi
 
-  # Copy scalafmt config to app directory
-  REPO_CONF_FILE=$(git rev-parse --show-toplevel)"/.scalafmt.conf"
-  if [[ $COPY_CONF == true && -f "$REPO_CONF_FILE" && $(diff "$CONF_FILE_PATH" "$REPO_CONF_FILE") ]]; then
-    cp -f "$CONF_FILE_PATH" "$REPO_CONF_FILE"
+  copy_configs_to_local || (echo "Failed to copy configs to local " >&2 && exit 1)
+  check_and_download_coursier || (echo "Failed to find coursier" >&2 && exit 1)
+  check_and_download_scalafmt || (echo "Failed to find scalafmt" >&2 && exit 1)
+
+  # for HOCON's includes to work we must have all the configs in the current working directory. (I tried putting them
+  # in the classpath, even making a custom JAR, and that didn't work. this is the ONLY way I've been able to get
+  # HOCON includes to work
+  # https://github.com/lightbend/config/blob/master/HOCON.md#includes
+  pushd "$CONF_DIR" >/dev/null
+  # direct stderr to /dev/null so we don't see useless "Reformatting..." messages
+  $SCALAFMT_CLI --non-interactive -c "$CONF_NAME" -i -f $FILES >/dev/null
+  popd >/dev/null
+}
+
+# https://stackoverflow.com/a/21188136/11889
+function get_abs_filename() {
+  # $1 : relative filename
+  filename=$1
+  parentdir=$(dirname "${filename}")
+
+  if [ -d "$filename" ]; then
+    pushd "$filename" >/dev/null && pwd && popd >/dev/null
+  elif [ -d "$parentdir" ]; then
+    # I'm not sure how to apply the pushd/popd trick here ...
+    echo "$(cd "$parentdir" && pwd)/$(basename "$filename")"
   fi
-
-  download_scalafmt
-
-  $SCALAFMT_CLI -c "$CONF_FILE_PATH" -i -f $FILES
 }
 
 while (("$#")); do
@@ -134,18 +152,18 @@ while (("$#")); do
       COPY_CONF=false
       ;;
     -*) # unsupported flags
-      echo "Error: Unsupported flag $1" >&2
-      exit 1
+      echo "Error: Unsupported flag $1" >&2 && exit 1
       ;;
     *)
-      if [[ ! -f $1 ]]; then
-        echo "Invalid arg specified: $1" >&2
-        exit 1
+      if [[ ! -f "$1" ]]; then
+        echo "Invalid arg specified: $1" >&2 && exit 1
       fi
+
+      NEW_FILE=$(get_abs_filename "$1")
       if [[ -z "$FILES" ]]; then
-        FILES=$1
+        FILES=$NEW_FILE
       else
-        FILES="$FILES,$1"
+        FILES="$FILES,$NEW_FILE"
       fi
       ;;
   esac
