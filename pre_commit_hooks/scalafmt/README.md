@@ -24,7 +24,7 @@ This hook supports:
 The [default config file](conf/default.conf) intends to be as close to the scalafmt defaults as possible while being as
 opinionated as possible (meaning code should be formatted exactly the same way, every time, where possible).
 
-| :notebook: The [default config file](conf/default.conf) should be preferred. |
+| :notebook: The [default config file](conf/default.conf) should be included as a base. |
 |-----|
 
 ## Solution Specific Configuration
