@@ -42,6 +42,9 @@ class WhitespaceIsLava[T <: Any: Ordering: Numeric](
       .result()
   def line81: String = "This line is exactly" + "81 chars long after formatting"
 
+  def line121: String =
+    "This line is exactly" + "121 chars long after formatting" + " Always happy when with long lines!"
+
   def caseLove(
     love: Int
   ): Boolean = love match {

@@ -22,6 +22,7 @@ implicit private val fieldFour: NullPointerException = new NullPointerException
 override def compareTo(o:WhitespaceIsLava[T]):Int=this.bar.compareTo(o.bar)
 override def toString: String = new StringBuilder().append("yOu").append(" ").append("ShOuLd").append("iMpLeMeNt").append(" ").append("A").append(" ").append("tOsTrInG").result()
 def line81: String = "This line is exactly"+"81 chars long after formatting"
+def line121: String = "This line is exactly" + "121 chars long after formatting" + " Always happy when with long lines!"
 def caseLove(love:Int):Boolean=love match{
 case 8675309=>true
 case 42=>true
