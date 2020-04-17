@@ -21,15 +21,16 @@ This hook supports:
 
 ## Default Configuration
 
-The [default config file](conf/default.conf) intends to be as close to the scalafmt defaults as possible while being as
-opinionated as possible (meaning code should be formatted exactly the same way, every time, where possible).
+The [default config file](conf/default.conf) intends to be as close to the
+scalafmt defaults as possible while being as opinionated as possible (meaning code should be formatted exactly the
+same way, every time, where possible).
 
 | :notebook: The [default config file](conf/default.conf) should be included as a base. |
 |-----|
 
 ## Solution Specific Configuration
 
-If a solution must provide its own config file it should be placed in the [`conf`](conf/) with a name that matches the
+If a solution must provide its own config file it should be placed in the [`conf`](conf) with a name that matches the
 solution, e.g.`<solution>.conf`, and then specify that configuration in your hook configuration in `.pre-commit-config`.
 
 For example if you add `conf/foo.conf` you need to update the scalafmt hook in `.pre-commit-config` like:
@@ -38,6 +39,12 @@ For example if you add `conf/foo.conf` you need to update the scalafmt hook in `
     - id: scalafmt
         args: --conf-name=foo
 ```
+
+# Testing
+
+Obviously making changes to a scalafmt configuration should be tested. To help with this we've created a "dirty"
+un-formatted code file that can be formatted so you can see your changes here before committing. See
+[scalafmt-examples](../scalafmt-examples/README.md) for more details.
 
 # Updating scalafmt Version
 
@@ -53,7 +60,7 @@ update `coursier` at the same time:
 1. Open [scalafmt.sh](../scalafmt.sh)
 1. Update `COURSIER_VERSION` to the [new version](https://github.com/coursier/coursier/releases)
 1. Update `SCALA_FMT_VERSION` to the [new version](https://github.com/scalameta/scalafmt/releases)
-1. Update the `scalafmt` version in the [configuration files](conf/), e.g.:
+1. Update the `scalafmt` version in the [configuration files](conf), e.g.:
     ```hocon
     version = "x.y.z"
     ```
