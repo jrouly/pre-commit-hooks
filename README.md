@@ -2,6 +2,15 @@
 
 Useful pre-commit-hooks for use with [Yelp's pre-commit](https://github.com/pre-commit/pre-commit).
 
+# Table of Contents
+
+- [Using hooks](#using-hooks)
+- [Available hooks](#available-hooks)
+    - [csv-formatter](#csv-formatter)
+    - [scalastyle](#scalastyle)
+    - [scalafmt](#scalafmt)
+    - [scalariform](#scalariform)
+
 # Using hooks
 Add a `.pre-commit-config.yaml` to your repository. e.g.:
 
@@ -13,7 +22,7 @@ Add a `.pre-commit-config.yaml` to your repository. e.g.:
     -   id: ...
 ```
 
-# Hooks defined in this repo
+# Available hooks
 
 ## csv-formatter
 
@@ -24,19 +33,19 @@ Formats CSVs by applying a consistent quoting standard.
     -   id: csv-formatter
 ```
 
-## [scalastyle](http://www.scalastyle.org/)
+## scalastyle
 
-Scala style checker.
-
-If project has `scalastyle-config.xml` in the project folder, example
-[`project/scalastyle-config.xml`](https://github.com/AudaxHealthInc/proton/project/scalastyle-config.xml)
-the script will use that config file, otherwise it will use the provided
-[default config](./pre_commit_hooks/scalastyle/configs/default.xml).
+[scalastyle](http://www.scalastyle.org/) the Scala style checker.
 
 ```yaml
     hooks:
     -   id: scalastyle
 ```
+
+### Configuration
+
+| :notebook: If project has `scalastyle-config.xml` in the project folder -- [for example](https://github.com/AudaxHealthInc/proton/project/scalastyle-config.xml) -- the script will use that config file and not the default  |
+| -------- |
 
 ### Testing
 
@@ -56,10 +65,11 @@ the script will use that config file, otherwise it will use the provided
 ### Configuration
 
 The `args` block is optional. If present, pass the name of a config file stored in
-[`pre_commit_hooks/scalafmt/conf/`](pre_commit_hooks/scalafmt/conf). If it's not present, scalafmt will fall back to
+[`pre_commit_hooks/scalafmt/conf/`](pre_commit_hooks/scalafmt/conf). If it's not present, scalafmt will default to
 [default.conf](pre_commit_hooks/scalafmt/conf/default.conf).
 
-Info on modifying config files can be found [here](pre_commit_hooks/scalafmt/README.md).
+Additional configuration files and information on modifying configurations files can be found
+[here](pre_commit_hooks/scalafmt/README.md).
 
 ### Intellij
 
@@ -71,7 +81,8 @@ When the pre-commit hooks runs [our script](pre_commit_hooks/scalafmt.sh) will c
 `/.scalafmt.conf` (overwriting the file if it exists). This is where the Intellij plugin expects the configuration file.
 Copying and overwriting ensures intellij and pre-commit are both formatting files the same way.
 
-## scalariform ❌
+## scalariform
+
 | :warning: [scalariform](https://github.com/scala-ide/scalariform) is no longer well-maintained, and is expected to reach the end of life when Scala 3 lands. At this point, we recommend using scalafmt instead. |
 |-----|
 

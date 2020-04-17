@@ -2,6 +2,16 @@
 
 This hook executes [scalafmt](https://scalameta.org/scalafmt/) on your Scala code files.
 
+# Table of Contents
+
+- [Installation](#installation)
+- [Configuration](#configuration)
+    - [Modify existing configurations](#modifying-exist-configurations)
+    - [Adding new configurations](#adding-new-configuration)
+- [Testing](#testing)
+- [Updating scalafmt Version](#updating-scalafmt-version)
+- [Resources](#resources)
+
 # Installation
 
 You need to add `scalafmt` as a hook into your `.pre-commit-config`:
@@ -9,29 +19,34 @@ You need to add `scalafmt` as a hook into your `.pre-commit-config`:
 - repo: git@github.com:AudaxHealthInc/pre-commit-hooks.git
   rev: vX.Y.Z
   hooks:
-    - id: csv-formatter
     - id: scalafmt
+      args: [--conf-name=default]
 ```
-
 # Configuration
 
 This hook supports:
 - [Rally default config](#default-configuration)
 - [Solution specific configs](#solution-specific-configuration).
 
-## Default Configuration
+| File | Description | Base |
+| ---- | ----------- | ---- |
+| [`compact.conf`](conf/compact.conf) | Default with tweaks for a more compact vie (i.e. 80 columns). | [`default.conf`](conf/default.conf) |
+| [`core.conf`](conf/core.conf) | Core solution's configuration. | [`default.conf`](conf/default.conf) |
+| [`default.conf`](conf/default.conf) | Rally's standard Scala format, defined by many passionate and heated discussions. | |
+| [`personalization.conf`](conf/personalization.conf) | Personalization solution's configuration. | [`default.conf`](conf/default.conf) |
+| [`scala-lang-org-style.conf`](conf/scala-lang-org-style.conf) | Configuration based on [Scala Lang's Style Guide](https://docs.scala-lang.org/style/). | |
 
-The [default config file](conf/default.conf) intends to be as close to the
-scalafmt defaults as possible while being as opinionated as possible (meaning code should be formatted exactly the
-same way, every time, where possible).
+## Modifying exist configurations
 
-| :notebook: The [default config file](conf/default.conf) should be included as a base. |
-|-----|
+Be _very_ careful when modifying existing configurations! Repositories are likely using that configuration, and if
+you update the configuration you might introduce unexpected changes to the users of that configuration -- few people
+will appreciate making a one-line change and end up with a PR that re-formats every file in the repository.
 
-## Solution Specific Configuration
+## Adding new configuration
 
-If a solution must provide its own config file it should be placed in the [`conf`](conf) with a name that matches the
-solution, e.g.`<solution>.conf`, and then specify that configuration in your hook configuration in `.pre-commit-config`.
+If there is good reason for creating a new config file it should be placed in the [`conf`](conf) with a name that
+matches the purpose, e.g. `<solution>.conf`, and then specify that configuration in your hook configuration in
+`.pre-commit-config`.
 
 For example if you add `conf/foo.conf` you need to update the scalafmt hook in `.pre-commit-config` like:
 ```yaml
@@ -39,6 +54,9 @@ For example if you add `conf/foo.conf` you need to update the scalafmt hook in `
     - id: scalafmt
         args: --conf-name=foo
 ```
+
+The [default config file](conf/default.conf) intends to be a default that you can extend and make tweaks. Consider
+using the [default config file](conf/default.conf) as a base.
 
 # Testing
 

@@ -2,6 +2,12 @@
 
 Examples of scalafmt formatting, so we can see the effects in a PR and agree _before_ they get applied everywhere.
 
+# Table of Contents
+
+- [Overview](#overview)
+- [Usage](#usage)
+- [Notes](#notes)
+
 # Overview
 
 The script [`scalafmt-examples.sh`](scalafmt-examples.sh) will format a test code file
@@ -25,9 +31,6 @@ So if you have a configuration file `scalafmt/conf/foo.conf` running this script
 
 ```shell script
 $ pre_commit_hooks/scalafmt-examples/scalafmt-examples.sh
-...
-Formatting with configuration pre_commit_hooks/scalafmt/conf/default.conf ...
-  └ pre_commit_hooks/scalafmt-examples/confs/default/WhitespaceIsLava.scala
 ...
 Formatting with configuration pre_commit_hooks/scalafmt/conf/foo.conf ...
   └ pre_commit_hooks/scalafmt-examples/confs/foo/WhitespaceIsLava.scala
