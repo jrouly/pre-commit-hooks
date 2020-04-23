@@ -2,7 +2,16 @@
 
 Useful pre-commit-hooks for use with [Yelp's pre-commit](https://github.com/pre-commit/pre-commit).
 
-### Using hooks
+# Table of Contents
+
+- [Using hooks](#using-hooks)
+- [Available hooks](#available-hooks)
+    - [csv-formatter](#csv-formatter)
+    - [scalastyle](#scalastyle)
+    - [scalafmt](#scalafmt)
+    - [scalariform](#scalariform)
+
+# Using hooks
 Add a `.pre-commit-config.yaml` to your repository. e.g.:
 
 ```yaml
@@ -13,9 +22,10 @@ Add a `.pre-commit-config.yaml` to your repository. e.g.:
     -   id: ...
 ```
 
-#### Hooks defined in this repo
+# Available hooks
 
-##### csv-formatter
+## csv-formatter
+
 Formats CSVs by applying a consistent quoting standard.
 
 ```yaml
@@ -23,21 +33,28 @@ Formats CSVs by applying a consistent quoting standard.
     -   id: csv-formatter
 ```
 
-##### [scalastyle](http://www.scalastyle.org/)
-Scala style checker.
-If project has `scalastyle-config.xml` in the project folder, example [`project/scalastyle-config.xml`](https://github.com/AudaxHealthInc/proton/project/scalastyle-config.xml) the script will use that config file, otherwise it will use the provided [default config](./pre_commit_hooks/scalastyle/configs/default.xml)
+## scalastyle
+
+[scalastyle](http://www.scalastyle.org/) the Scala style checker.
 
 ```yaml
     hooks:
     -   id: scalastyle
 ```
 
-The `args` block is optional.
-If present, pass the name of a template file stored in `pre_commit_hooks/scalariform/templates/`.
-If it's not present, Scalariform will fall back to the default template.
+### Configuration
 
-##### [scalafmt](http://scalameta.org/scalafmt/)
-An opinionated code formatter for Scala.
+| :notebook: If project has `scalastyle-config.xml` in the project folder -- [for example](https://github.com/AudaxHealthInc/proton/project/scalastyle-config.xml) -- the script will use that config file and not the default  |
+| -------- |
+
+### Testing
+
+- Go to your repo with pre-commit
+- Run `pre-commit try-repo ../pre-commit-hooks scalastyle --verbose --all-files`
+
+## scalafmt
+
+[scalafmt](http://scalameta.org/scalafmt/) is an opinionated code formatter for Scala.
 
 ```yaml
     hooks:
@@ -45,20 +62,31 @@ An opinionated code formatter for Scala.
         args: [--conf-name=default]
 ```
 
-The `args` block is optional.
-If present, pass the name of a conf stored in `pre_commit_hooks/scalafmt/conf/<confname>.conf` .
-If it's not present, scalafmt will fall back to default.conf.
+### Configuration
 
-If there is a .scalafmt.conf in the consuming repo, it will be overwritten. This ensures intellij and pre-commit
-are both formatting files the same way.
+The `args` block is optional. If present, pass the name of a config file stored in
+[`pre_commit_hooks/scalafmt/conf/`](pre_commit_hooks/scalafmt/conf). If it's not present, scalafmt will default to
+[default.conf](pre_commit_hooks/scalafmt/conf/default.conf).
 
-Info on adding config files can be found [here](./pre_commit_hooks/scalafmt/conf/README.md).
+Additional configuration files and information on modifying configurations files can be found
+[here](pre_commit_hooks/scalafmt/README.md).
 
-##### scalariform ❌
+### Intellij
+
+Intellij [officially](https://www.jetbrains.com/help/idea/work-with-scala-formatter.html) supports scalafmt via a
+[plugin](https://plugins.jetbrains.com/plugin/8236-scalafmt). It is recommended to use this plugin to allow Intellij to
+format your code while you are working.
+
+When the pre-commit hooks runs [our script](pre_commit_hooks/scalafmt.sh) will copy the configuration to
+`/.scalafmt.conf` (overwriting the file if it exists). This is where the Intellij plugin expects the configuration file.
+Copying and overwriting ensures intellij and pre-commit are both formatting files the same way.
+
+## scalariform
+
 | :warning: [scalariform](https://github.com/scala-ide/scalariform) is no longer well-maintained, and is expected to reach the end of life when Scala 3 lands. At this point, we recommend using scalafmt instead. |
 |-----|
 
-Formats Scala code by applying a set of customizable rules.
+[scalariform](https://github.com/scala-ide/scalariform) formats Scala code by applying a set of customizable rules.
 
 ```yaml
     hooks:
@@ -66,7 +94,6 @@ Formats Scala code by applying a set of customizable rules.
         args: [templatename]
 ```
 
-### Testing
-- Go to your repo with pre-commit
-- Run `pre-commit try-repo ../pre-commit-hooks scalastyle --ref 2ebef2966cee0e5e27e244007bc7677fbcdd4a85  --verbose --all-files`
-  - `--ref` is reference to `git sha` of your changes
+The `args` block is optional. If present, pass the name of a template file stored in
+[`pre_commit_hooks/scalariform/templates/`](pre_commit_hooks/scalariform/templates). If it's not present,
+Scalariform will fall back to the [default template](pre_commit_hooks/scalariform/templates/default.properties).
