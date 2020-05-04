@@ -66,7 +66,7 @@ un-formatted code file that can be formatted so you can see your changes here be
 
 # Updating scalafmt Version
 
-When you update `scalafmt` you should
+Scalafmt-native official releases started with 2.3.2, so all earlier versions are unsupported by the download script. When you update `scalafmt` you should:
 
 1. Remove the old `scalafmt` versions [here](/), e.g.
      ```shell
@@ -91,7 +91,6 @@ new version of `scalafmt`
      └ pre_commit_hooks/scalafmt-examples/confs/default/WhitespaceIsLava.scala
    ...
    ```
-6. You'll also want to manually download the linux binary from the [scalafmt release page](https://github.com/scalameta/scalafmt/releases), name it `scalafmt-linux-version`, place it in the scalafmt directory, and make it executable
 7. Add the new `scalafmt` versions to git, e.g.:
     ```shell
     $ git add scalafmt-*

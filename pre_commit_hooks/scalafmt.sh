@@ -18,14 +18,11 @@ SCALAFMT_DIR="$PRE_COMMIT_HOOKS_DIR/scalafmt"
 CONF_DIR="$SCALAFMT_DIR/conf"
 REPO_ROOT_DIR=$(git rev-parse --show-toplevel)
 # If running on mac os, use darwin binary, else use linux binary
-if uname | grep "Darwin" > /dev/null
-then
-  KERNEL=macos
-else
-  KERNEL=linux
+SCALAFMT_NAME=scalafmt-linux
+if [ "$(uname)" == "Darwin" ]; then
+  SCALAFMT_NAME=scalafmt-macos
 fi
-SCALAFMT_CLI="$SCALAFMT_DIR/scalafmt-$KERNEL-$SCALAFMT_VERSION"
-
+SCALAFMT_NATIVE="$SCALAFMT_DIR/$SCALAFMT_NAME-$SCALAFMT_VERSION"
 # -conf-name - configuration file name, default will be overwritten if specified
 CONF_NAME=default.conf
 # --no-copy-conf - Flag to disable copying the conf to the root of the git clone
@@ -34,15 +31,28 @@ COPY_CONF=true
 FILES=""
 
 # Checks that scalafmt native CLI exists, and if not, downloads it
-# scalafmt native releases began with 2.5.1, this will fail with older versions
+# scalafmt native releases began with 2.3.2, this will fail with older versions
 # - Scalafmt native CLI - https://scalameta.org/scalafmt/docs/installation.html#native-image
 function check_and_download_scalafmt() {
-  [[ -f "$SCALAFMT_CLI" ]] && return
+  [[ -f "$SCALAFMT_NATIVE" ]] && return
 
   echo "Downloading scalafmt $SCALAFMT_VERSION ..." >&2
-  # redirect to /dev/null because it still prints garbage even with --quiet :(
-  curl https://raw.githubusercontent.com/scalameta/scalafmt/master/bin/install-scalafmt-native.sh 2> /dev/null | \
-  bash -s -- $SCALAFMT_VERSION $SCALAFMT_CLI
+  download_scalafmt macos
+  download_scalafmt linux
+}
+
+function download_scalafmt() {
+  KERNEL=$1
+  CWD=$(pwd)
+  SCALAFMT_NATIVE_TMP=$(mktemp -d)
+  cd $SCALAFMT_NATIVE_TMP
+  SCALAFMT_ZIP=scalafmt-$KERNEL.zip
+  curl --fail -Los $SCALAFMT_ZIP https://github.com/scalameta/scalafmt/releases/download/v$SCALAFMT_VERSION/$SCALAFMT_ZIP
+  unzip $SCALAFMT_ZIP
+  cp scalafmt $SCALAFMT_NATIVE
+  chmod +x $SCALAFMT_NATIVE
+  cd $CWD
+  rm -rf $SCALAFMT_NATIVE_TMP
 }
 
 # If $COPY_CONF is true this copies all config files from "conf" to $REPO_ROOT_DIR and renames "CONF_FILE" to
@@ -83,7 +93,7 @@ function run_scalafmt() {
   # https://github.com/lightbend/config/blob/master/HOCON.md#includes
   pushd "$CONF_DIR" >/dev/null
   # direct stderr to /dev/null so we don't see useless "Reformatting..." messages
-  $SCALAFMT_CLI --non-interactive -c "$CONF_NAME" -i -f $FILES >/dev/null
+  $SCALAFMT_NATIVE --non-interactive -c "$CONF_NAME" -i -f $FILES >/dev/null
   popd >/dev/null
 }
 
