@@ -66,21 +66,21 @@ un-formatted code file that can be formatted so you can see your changes here be
 
 # Updating scalafmt Version
 
-When you update `scalafmt` you should probably
+When you update `scalafmt` you should
 
 1. Remove the old `scalafmt` versions [here](/), e.g.
      ```shell
      $ git rm scalafmt-*
      rm 'pre_commit_hooks/scalafmt/scalafmt-*'
      ```
-1. Open [scalafmt.sh](../scalafmt.sh)
-1. Update `SCALA_FMT_VERSION` to the [new version](https://github.com/scalameta/scalafmt/releases)
-1. Update the `scalafmt` version in the [configuration files](conf), e.g.:
+2. Open [scalafmt.sh](../scalafmt.sh)
+3. Update `SCALA_FMT_VERSION` to the [new version](https://github.com/scalameta/scalafmt/releases)
+4. Update the `scalafmt` version in the [configuration files](conf), e.g.:
     ```hocon
     version = "x.y.z"
     ```
-1. Run [`scalafmt-examples.sh`](../scalafmt-examples/README.md) to download the
-new version of `scalafmt` 
+5. Run [`scalafmt-examples.sh`](../scalafmt-examples/README.md) to download the
+new version of `scalafmt`
    ```shell
    $ pre_commit_hooks/scalafmt-examples/scalafmt-examples.sh
    Formatting with configuration pre_commit_hooks/scalafmt/conf/core.conf ...
@@ -91,11 +91,12 @@ new version of `scalafmt`
      └ pre_commit_hooks/scalafmt-examples/confs/default/WhitespaceIsLava.scala
    ...
    ```
-1. Add the new `scalafmt` versions to git, e.g.:
+6. You'll also want to manually download the linux binary from the [scalafmt release page](https://github.com/scalameta/scalafmt/releases), name it `scalafmt-linux-version`, place it in the scalafmt directory, and make it executable
+7. Add the new `scalafmt` versions to git, e.g.:
     ```shell
     $ git add scalafmt-*
     ```
-1. Commit and push a PR
+8. Commit and push a PR
 
 # Resources
 

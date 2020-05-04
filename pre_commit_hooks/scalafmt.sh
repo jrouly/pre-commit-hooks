@@ -9,7 +9,7 @@ set -eu
 #   ./scalafmt.sh [--no-copy-conf] [--conf-name=<CONF_NAME>] [file ...]
 ##############################################################################
 
-SCALAFMT_VERSION=2.5.1
+SCALAFMT_VERSION=2.0.0
 
 # https://electrictoolbox.com/bash-script-directory/
 SCALAFMT_SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
@@ -17,7 +17,14 @@ PRE_COMMIT_HOOKS_DIR=$(pushd "$SCALAFMT_SCRIPT_DIR" >/dev/null && pwd && popd >/
 SCALAFMT_DIR="$PRE_COMMIT_HOOKS_DIR/scalafmt"
 CONF_DIR="$SCALAFMT_DIR/conf"
 REPO_ROOT_DIR=$(git rev-parse --show-toplevel)
-SCALAFMT_CLI="$SCALAFMT_DIR/scalafmt-$SCALAFMT_VERSION"
+# If running on mac os, use darwin binary, else use linux binary
+if uname | grep "Darwin" > /dev/null
+then
+  KERNEL=macos
+else
+  KERNEL=linux
+fi
+SCALAFMT_CLI="$SCALAFMT_DIR/scalafmt-$KERNEL-$SCALAFMT_VERSION"
 
 # -conf-name - configuration file name, default will be overwritten if specified
 CONF_NAME=default.conf
@@ -26,8 +33,9 @@ COPY_CONF=true
 # Comma separated line of ABSOLUTE file names to format
 FILES=""
 
-# Checks that scalafmt CLI exists, and if not, downloads it
-# - Scalafmt CLI - https://scalameta.org/scalafmt/docs/installation.html#native-image
+# Checks that scalafmt native CLI exists, and if not, downloads it
+# scalafmt native releases began with 2.5.1, this will fail with older versions
+# - Scalafmt native CLI - https://scalameta.org/scalafmt/docs/installation.html#native-image
 function check_and_download_scalafmt() {
   [[ -f "$SCALAFMT_CLI" ]] && return
 
