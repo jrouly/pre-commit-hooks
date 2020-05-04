@@ -10,7 +10,7 @@ set -eu
 ##############################################################################
 
 # Check scalafmt/README.md before modifying scalafmt version
-SCALAFMT_VERSION=2.5.1
+SCALAFMT_VERSION=2.0.0
 
 # https://electrictoolbox.com/bash-script-directory/
 SCALAFMT_SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
