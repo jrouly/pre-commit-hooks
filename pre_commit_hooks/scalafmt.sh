@@ -3,28 +3,13 @@
 set -eu
 
 ##############################################################################
-# Installs scalafmt via coursier and runs it at the command line for the
-# provided files.
+# Installs scalafmt and runs it at the command line for the provided files.
 #
 # Usage:
 #   ./scalafmt.sh [--no-copy-conf] [--conf-name=<CONF_NAME>] [file ...]
-#
-# References
-# - Scalafmt CLI - https://scalameta.org/scalafmt/docs/installation.html#coursier
-# - Coursier CLI - https://get-coursier.io/docs/cli-overview
-#
-# Notes:
-# - Previous versions of this script used scalafmt-native binaries. But there
-# were no instructions on how to update them or where they came from. I guess
-# here https://github.com/mroth/scalafmt-native but I can't confirm. So I've
-# updated these to use coursier which is one of the recommended approaches.
-# - We intentionally do not keep the file downloaded by coursier's
 ##############################################################################
 
-COURSIER_VERSION=v2.0.0-RC6-10
-COURSIER_URL="https://github.com/coursier/coursier/releases/download/$COURSIER_VERSION/coursier"
-# We use this version because last time I tried to updated to 2.4.2 it introduced unexpected changes
-SCALAFMT_VERSION=2.0.0
+SCALAFMT_VERSION=2.5.1
 
 # https://electrictoolbox.com/bash-script-directory/
 SCALAFMT_SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
@@ -32,18 +17,7 @@ PRE_COMMIT_HOOKS_DIR=$(pushd "$SCALAFMT_SCRIPT_DIR" >/dev/null && pwd && popd >/
 SCALAFMT_DIR="$PRE_COMMIT_HOOKS_DIR/scalafmt"
 CONF_DIR="$SCALAFMT_DIR/conf"
 REPO_ROOT_DIR=$(git rev-parse --show-toplevel)
-
-# move the cache somewhere safe to write, as this can fail with the default location on Jenkins
-# this is done here since it is used by both coursier itself and the scalafmt launcher that coursier builds
-# https://get-coursier.io/docs/cache.html#manual-override
-export COURSIER_CACHE="$REPO_ROOT_DIR/cache/coursier"
-mkdir -p "$COURSIER_CACHE"
-
-# NOTE: Be very careful with the order of arguments! "courser fetch XXX --foo" != "courser fetch --foo XXX"
-COURSIER_CLI="$SCALAFMT_DIR/coursier-$COURSIER_VERSION"
 SCALAFMT_CLI="$SCALAFMT_DIR/scalafmt-$SCALAFMT_VERSION"
-# name of scalafmt for fetching with coursier
-SCALAFMT_ARTIFACT="org.scalameta:scalafmt-cli_2.12:$SCALAFMT_VERSION"
 
 # -conf-name - configuration file name, default will be overwritten if specified
 CONF_NAME=default.conf
@@ -52,35 +26,15 @@ COPY_CONF=true
 # Comma separated line of ABSOLUTE file names to format
 FILES=""
 
-# Checks that coursier CLI exists, and if not, downloads it
-# https://get-coursier.io/docs/cli-overview
-function check_and_download_coursier() {
-  [[ -f "$COURSIER_CLI" ]] && return
-
-  [[ -z $(command -v curl) ]] && (echo "cURL is not installed, cannot download coursier" >&2 && exit 1)
-
-  echo "Downloading coursier $COURSIER_VERSION ..." >&2
-  curl --progress-bar --location --output "$COURSIER_CLI" "$COURSIER_URL" && chmod +x "$COURSIER_CLI"
-}
-
 # Checks that scalafmt CLI exists, and if not, downloads it
-# https://scalameta.org/scalafmt/docs/installation.html#coursier
+# - Scalafmt CLI - https://scalameta.org/scalafmt/docs/installation.html#native-image
 function check_and_download_scalafmt() {
   [[ -f "$SCALAFMT_CLI" ]] && return
 
-  echo "Downloading scalafmt $SCALAFMT_VERSION using coursier ..." >&2
+  echo "Downloading scalafmt $SCALAFMT_VERSION ..." >&2
   # redirect to /dev/null because it still prints garbage even with --quiet :(
-  "$COURSIER_CLI" bootstrap "$SCALAFMT_ARTIFACT" \
-    --quiet \
-    --standalone \
-    --mode missing \
-    --repository central \
-    --repository sonatype:snapshots \
-    --keep-optional \
-    --force-fetch \
-    --output "$SCALAFMT_CLI" \
-    --main org.scalafmt.cli.Cli \
-    >/dev/null
+  curl https://raw.githubusercontent.com/scalameta/scalafmt/master/bin/install-scalafmt-native.sh | \
+  bash -s -- $SCALAFMT_VERSION $SCALAFMT_CLI > /dev/null
 }
 
 # If $COPY_CONF is true this copies all config files from "conf" to $REPO_ROOT_DIR and renames "CONF_FILE" to
@@ -113,7 +67,6 @@ function run_scalafmt() {
   fi
 
   copy_configs_to_local || (echo "Failed to copy configs to local " >&2 && exit 1)
-  check_and_download_coursier || (echo "Failed to find coursier" >&2 && exit 1)
   check_and_download_scalafmt || (echo "Failed to find scalafmt" >&2 && exit 1)
 
   # for HOCON's includes to work we must have all the configs in the current working directory. (I tried putting them
