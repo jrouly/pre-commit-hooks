@@ -10,7 +10,7 @@ set -eu
 ##############################################################################
 
 # Check scalafmt/README.md before modifying scalafmt version
-SCALAFMT_VERSION=2.0.0
+SCALAFMT_VERSION=2.5.1
 
 # https://electrictoolbox.com/bash-script-directory/
 SCALAFMT_SCRIPT_DIR=$(dirname "${BASH_SOURCE[0]}")
@@ -38,8 +38,9 @@ function check_and_download_scalafmt() {
   [[ -f "$SCALAFMT_NATIVE" ]] && return
 
   echo "Downloading scalafmt $SCALAFMT_VERSION ..." >&2
-  download_scalafmt macos
-  download_scalafmt linux
+  # we don't care about stdout for downloads
+  download_scalafmt "macos" > /dev/null
+  download_scalafmt "linux" > /dev/null
 }
 
 function download_scalafmt() {
@@ -47,11 +48,12 @@ function download_scalafmt() {
   CWD=$(pwd)
   SCALAFMT_NATIVE_TMP=$(mktemp -d)
   cd $SCALAFMT_NATIVE_TMP
-  SCALAFMT_ZIP=scalafmt-$KERNEL.zip
-  curl --fail -Los $SCALAFMT_ZIP https://github.com/scalameta/scalafmt/releases/download/v$SCALAFMT_VERSION/$SCALAFMT_ZIP
+  SCALAFMT_BIN=scalafmt-$KERNEL
+  SCALAFMT_ZIP=$SCALAFMT_BIN.zip
+  curl --fail --silent -Lo $SCALAFMT_ZIP "https://github.com/scalameta/scalafmt/releases/download/v$SCALAFMT_VERSION/$SCALAFMT_ZIP"
   unzip $SCALAFMT_ZIP
-  cp scalafmt $SCALAFMT_NATIVE
-  chmod +x $SCALAFMT_NATIVE
+  chmod +x scalafmt
+  cp scalafmt $SCALAFMT_DIR/$SCALAFMT_BIN-$SCALAFMT_VERSION
   cd $CWD
   rm -rf $SCALAFMT_NATIVE_TMP
 }
