@@ -33,8 +33,8 @@ function check_and_download_scalafmt() {
 
   echo "Downloading scalafmt $SCALAFMT_VERSION ..." >&2
   # redirect to /dev/null because it still prints garbage even with --quiet :(
-  curl https://raw.githubusercontent.com/scalameta/scalafmt/master/bin/install-scalafmt-native.sh | \
-  bash -s -- $SCALAFMT_VERSION $SCALAFMT_CLI > /dev/null
+  curl https://raw.githubusercontent.com/scalameta/scalafmt/master/bin/install-scalafmt-native.sh 2> /dev/null | \
+  bash -s -- $SCALAFMT_VERSION $SCALAFMT_CLI
 }
 
 # If $COPY_CONF is true this copies all config files from "conf" to $REPO_ROOT_DIR and renames "CONF_FILE" to
