@@ -66,7 +66,12 @@ un-formatted code file that can be formatted so you can see your changes here be
 
 # Updating scalafmt Version
 
-Scalafmt-native official releases started with 2.3.2, so all earlier versions are unsupported by the download script. When you update `scalafmt` you should:
+Bumping scalafmt version can have a significant impact on formatting due to bugfixes and new features. After updating
+the version, be sure to update all configs that require changes to maintain existing behavior. Some formatting changes
+will be unavoidable, but try to ensure there are no major changes to the code style.
+
+Scalafmt-native official releases started with 2.3.2, so all earlier versions are unsupported by the download script.
+When you update `scalafmt` you should:
 
 1. Remove the old `scalafmt` versions [here](/), e.g.
      ```shell

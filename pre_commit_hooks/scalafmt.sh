@@ -9,6 +9,7 @@ set -eu
 #   ./scalafmt.sh [--no-copy-conf] [--conf-name=<CONF_NAME>] [file ...]
 ##############################################################################
 
+# Check scalafmt/README.md before modifying scalafmt version
 SCALAFMT_VERSION=2.0.0
 
 # https://electrictoolbox.com/bash-script-directory/
