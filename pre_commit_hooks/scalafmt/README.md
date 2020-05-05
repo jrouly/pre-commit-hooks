@@ -66,43 +66,43 @@ un-formatted code file that can be formatted so you can see your changes here be
 
 # Updating scalafmt Version
 
-We run `scalafmt` using [`coursier`](https://get-coursier.io/), so when you update `scalafmt` you should probably
-update `coursier` at the same time:
+Bumping scalafmt version can have a significant impact on formatting due to bugfixes and new features. After updating
+the version, be sure to update all configs that require changes to maintain existing behavior. Some formatting changes
+will be unavoidable, but try to ensure there are no major changes to the code style.
 
-1. Remove the old `coursier` and `scalafmt` versions [here](/), e.g.
+[Scalafmt-native official releases started with 2.3.2](https://scalameta.org/scalafmt/docs/installation.html#native-image), so all earlier versions are unsupported by the download script.
+Older versions are pulled from here: https://github.com/mroth/scalafmt-native
+
+When you update `scalafmt` you should:
+
+1. Remove the old `scalafmt` versions [here](/), e.g.
      ```shell
      $ git rm scalafmt-*
-     rm 'pre_commit_hooks/scalafmt/coursier-*'
      rm 'pre_commit_hooks/scalafmt/scalafmt-*'
      ```
-1. Open [scalafmt.sh](../scalafmt.sh)
-1. Update `COURSIER_VERSION` to the [new version](https://github.com/coursier/coursier/releases)
-1. Update `SCALA_FMT_VERSION` to the [new version](https://github.com/scalameta/scalafmt/releases)
-1. Update the `scalafmt` version in the [configuration files](conf), e.g.:
+2. Open [scalafmt.sh](../scalafmt.sh)
+3. Update `SCALAFMT_VERSION` to the [new version](https://github.com/scalameta/scalafmt/releases)
+4. Update the `scalafmt` version in the [configuration files](conf), e.g.:
     ```hocon
     version = "x.y.z"
     ```
-1. Run [`scalafmt-examples.sh`](../scalafmt-examples/README.md) to download the
-new version of `scalafmt` (which may also download
-[coursier](https://get-coursier.io/docs/cli-overview.html#specific-versions))
+5. Run [`scalafmt-examples.sh`](../scalafmt-examples/README.md) to download the
+new version of `scalafmt`
    ```shell
    $ pre_commit_hooks/scalafmt-examples/scalafmt-examples.sh
    Formatting with configuration pre_commit_hooks/scalafmt/conf/core.conf ...
      └ pre_commit_hooks/scalafmt-examples/confs/core/WhitespaceIsLava.scala
-   Downloading coursier vA.B.C ...
-   ########################################################################################## 100.0%
-   Downloading scalafmt x.y.z using coursier ...
+   Downloading scalafmt x.y.z ...
    Wrote /.../pre-commit-hooks/pre_commit_hooks/scalafmt/scalafmt-x.y.z
    Formatting with configuration pre_commit_hooks/scalafmt/conf/default.conf ...
      └ pre_commit_hooks/scalafmt-examples/confs/default/WhitespaceIsLava.scala
    ...
    ```
-1. Add the new `coursier` and `scalafmt` versions to git, e.g.:
+7. Add the new `scalafmt` versions to git, e.g.:
     ```shell
-    $ git add coursier-*
     $ git add scalafmt-*
     ```
-1. Commit and push a PR
+8. Commit and push a PR
 
 # Resources
 
