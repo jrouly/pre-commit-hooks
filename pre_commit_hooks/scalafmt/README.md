@@ -71,6 +71,8 @@ the version, be sure to update all configs that require changes to maintain exis
 will be unavoidable, but try to ensure there are no major changes to the code style.
 
 [Scalafmt-native official releases started with 2.3.2](https://scalameta.org/scalafmt/docs/installation.html#native-image), so all earlier versions are unsupported by the download script.
+Older versions are pulled from here: https://github.com/mroth/scalafmt-native
+
 When you update `scalafmt` you should:
 
 1. Remove the old `scalafmt` versions [here](/), e.g.

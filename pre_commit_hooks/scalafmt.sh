@@ -7,6 +7,8 @@ set -eu
 #
 # Usage:
 #   ./scalafmt.sh [--no-copy-conf] [--conf-name=<CONF_NAME>] [file ...]
+
+# - Scalafmt native - https://scalameta.org/scalafmt/docs/installation.html#native-image
 ##############################################################################
 
 # Check scalafmt/README.md before modifying scalafmt version
@@ -33,9 +35,10 @@ FILES=""
 
 # Checks that scalafmt native CLI exists, and if not, downloads it
 # scalafmt native releases began with 2.3.2, this will fail with older versions
+# Older versions are pulled from here: https://github.com/mroth/scalafmt-native
 # - Scalafmt native CLI - https://scalameta.org/scalafmt/docs/installation.html#native-image
 function check_and_download_scalafmt() {
-  [[ -f "$SCALAFMT_NATIVE" ]] && return
+  [[ -f "$SCALAFMT_DIR/scalafmt-macos-$SCALAFMT_VERSION" || -f "$SCALAFMT_DIR/scalafmt-linux-$SCALAFMT_VERSION" ]] && return
 
   echo "Downloading scalafmt $SCALAFMT_VERSION ..." >&2
   # we don't care about stdout for downloads
@@ -43,7 +46,12 @@ function check_and_download_scalafmt() {
   download_scalafmt "linux" > /dev/null
 }
 
+# param kernel: which kernel to
+# Downloads scalafmt-native
+# param $1: Kernel to download scalafmt-native for, macos or linux
 function download_scalafmt() {
+  [[ -z $(command -v curl) ]] && (echo "cURL is not installed, cannot download coursier" >&2 && exit 1)
+
   KERNEL=$1
   CWD=$(pwd)
   SCALAFMT_NATIVE_TMP=$(mktemp -d)
@@ -51,6 +59,10 @@ function download_scalafmt() {
   SCALAFMT_BIN=scalafmt-$KERNEL
   SCALAFMT_ZIP=$SCALAFMT_BIN.zip
   curl --fail --silent -Lo "$SCALAFMT_ZIP" "https://github.com/scalameta/scalafmt/releases/download/v$SCALAFMT_VERSION/$SCALAFMT_ZIP"
+  if [ $? != 0 ]; then
+    echo "Failed to download scalafmt-native" >&2
+    exit 1
+  fi
   unzip $SCALAFMT_ZIP
   chmod +x scalafmt
   cp scalafmt $SCALAFMT_DIR/$SCALAFMT_BIN-$SCALAFMT_VERSION
