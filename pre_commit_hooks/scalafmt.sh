@@ -19,11 +19,11 @@ SCALAFMT_DIR="$PRE_COMMIT_HOOKS_DIR/scalafmt"
 CONF_DIR="$SCALAFMT_DIR/conf"
 REPO_ROOT_DIR=$(git rev-parse --show-toplevel)
 # If running on mac os, use darwin binary, else use linux binary
-SCALAFMT_NAME=scalafmt-linux
+SCALAFMT_KERNEL=scalafmt-linux
 if [ "$(uname)" == "Darwin" ]; then
-  SCALAFMT_NAME=scalafmt-macos
+  SCALAFMT_KERNEL=scalafmt-macos
 fi
-SCALAFMT_NATIVE="$SCALAFMT_DIR/$SCALAFMT_NAME-$SCALAFMT_VERSION"
+SCALAFMT_NATIVE="$SCALAFMT_DIR/$SCALAFMT_KERNEL-$SCALAFMT_VERSION"
 # -conf-name - configuration file name, default will be overwritten if specified
 CONF_NAME=default.conf
 # --no-copy-conf - Flag to disable copying the conf to the root of the git clone
