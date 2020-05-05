@@ -79,7 +79,7 @@ When you update `scalafmt` you should:
      rm 'pre_commit_hooks/scalafmt/scalafmt-*'
      ```
 2. Open [scalafmt.sh](../scalafmt.sh)
-3. Update `SCALA_FMT_VERSION` to the [new version](https://github.com/scalameta/scalafmt/releases)
+3. Update `SCALAFMT_VERSION` to the [new version](https://github.com/scalameta/scalafmt/releases)
 4. Update the `scalafmt` version in the [configuration files](conf), e.g.:
     ```hocon
     version = "x.y.z"
