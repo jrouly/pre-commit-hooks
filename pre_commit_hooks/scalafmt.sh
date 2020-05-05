@@ -50,7 +50,7 @@ function check_and_download_scalafmt() {
 # Downloads scalafmt-native
 # param $1: Kernel to download scalafmt-native for, macos or linux
 function download_scalafmt() {
-  [[ -z $(command -v curl) ]] && (echo "cURL is not installed, cannot download coursier" >&2 && exit 1)
+  [[ -z $(command -v curl) ]] && (echo "cURL is not installed, cannot download scalafmt" >&2 && exit 1)
 
   KERNEL=$1
   CWD=$(pwd)
