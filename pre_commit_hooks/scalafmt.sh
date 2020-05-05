@@ -50,7 +50,7 @@ function download_scalafmt() {
   cd $SCALAFMT_NATIVE_TMP
   SCALAFMT_BIN=scalafmt-$KERNEL
   SCALAFMT_ZIP=$SCALAFMT_BIN.zip
-  curl --fail --silent -Lo $SCALAFMT_ZIP "https://github.com/scalameta/scalafmt/releases/download/v$SCALAFMT_VERSION/$SCALAFMT_ZIP"
+  curl --fail --silent -Lo "$SCALAFMT_ZIP" "https://github.com/scalameta/scalafmt/releases/download/v$SCALAFMT_VERSION/$SCALAFMT_ZIP"
   unzip $SCALAFMT_ZIP
   chmod +x scalafmt
   cp scalafmt $SCALAFMT_DIR/$SCALAFMT_BIN-$SCALAFMT_VERSION
