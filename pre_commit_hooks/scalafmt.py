@@ -60,17 +60,14 @@ def get_conf_path(conf_name):
         return conf_path
 
 
-def copy_conf_to(conf_path, target_dir, generated_conf_name):
+def copy_conf_to(from_path, target_path):
     """ Resolve the requested configuration file with any included HOCON
-    dependencies. Copy the resulting configuration into the target directory
-    as {generated_conf_name}. """
+    dependencies. Copy the resulting configuration to the target path. """
 
-    # Output conf file path.
-    output_conf_path = os.path.join(target_dir, generated_conf_name)
-    if os.path.exists(output_conf_path):
-        logger.debug(f'Callously overwriting existing {generated_conf_name}')
+    if os.path.exists(target_path):
+        logger.debug(f'Callously overwriting existing config: {target_path}')
 
-    with open(output_conf_path, 'w') as outfile:
+    with open(target_path, 'w') as outfile:
         outfile.write("# Automatically generated using pre-commit hooks.\n")
         outfile.write(
             "# Any manual changes to this file will be overwritten.\n")
@@ -78,10 +75,8 @@ def copy_conf_to(conf_path, target_dir, generated_conf_name):
         from pyhocon import ConfigFactory
         from pyhocon.tool import HOCONConverter
 
-        conf = ConfigFactory.parse_file(conf_path)
+        conf = ConfigFactory.parse_file(from_path)
         outfile.write(HOCONConverter.convert(conf, 'hocon'))
-
-    return output_conf_path
 
 
 def generate_conf(conf_name, copy_conf, generated_conf_name):
@@ -95,7 +90,8 @@ def generate_conf(conf_name, copy_conf, generated_conf_name):
         return None
     else:
         target_dir = os.getcwd() if copy_conf else pre_commit_hooks_dir
-        copy_conf_to(conf_path, target_dir, generated_conf_name)
+        target_path = os.join(target_dir, generated_conf_name)
+        copy_conf_to(conf_path, target_path)
 
 
 def get_scalafmt_binary_path(scalafmt_version):
