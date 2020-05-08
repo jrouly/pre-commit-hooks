@@ -3,7 +3,7 @@
 set -euo pipefail
 
 ##############################################################################
-# Runs "scalafmt.sh" on each configuration defined in "scalafmt/conf" on the
+# Runs "scalafmt.py" on each configuration defined in "scalafmt/conf" on the
 # Scala files in "templates" -- outputting the results into similarly named
 # directories in "confs" -- so you can see the changes.
 #
@@ -29,7 +29,7 @@ for CONF_FILE in "pre_commit_hooks/scalafmt/conf/"*.conf; do
     # Format them.
     for FILE in "$OUTPUT_DIR"/*; do
         echo "  └ $FILE" >&2
-        pre_commit_hooks/scalafmt.sh --no-copy-conf "--conf-name=$CONF_NAME" "./$FILE" || \
-          (echo "scalafmt.sh failed, halting" >&2 && exit 1)
+        pre_commit_hooks/scalafmt.py --no-copy-conf "--conf-name=$CONF_NAME" "./$FILE" || \
+          (echo "scalafmt.py failed, halting" >&2 && exit 1)
     done
 done
