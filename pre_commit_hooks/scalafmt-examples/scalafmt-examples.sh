@@ -15,6 +15,12 @@ if [ ! -d "pre_commit_hooks" ]; then
     echo "Cannot find 'pre_commit_hooks' -- this must be run from the root of the 'pre_commit_hooks' checkout" 1>&2
     exit 1
 fi
+
+# Install dependencies for scalafmt.py.
+# End users will not need to install dependencies like this.
+# pre-commit takes care of that for us with python-language hooks.
+pip3 install -r pre_commit_hooks/scalafmt-examples/requirements.txt
+
 # For each conf, copy ugly templates and format them.
 for CONF_FILE in "pre_commit_hooks/scalafmt/conf/"*.conf; do
     CONF_NAME=$(basename "$CONF_FILE" .conf) # => "connect"
