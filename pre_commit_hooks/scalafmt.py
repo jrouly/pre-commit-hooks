@@ -93,6 +93,7 @@ def generate_conf(conf_name, copy_conf, generated_conf_name):
         target_dir = os.getcwd() if copy_conf else pre_commit_hooks_dir
         target_path = os.path.join(target_dir, generated_conf_name)
         copy_conf_to(conf_path, target_path)
+        return target_path
 
 
 def get_scalafmt_binary_path(scalafmt_version):
