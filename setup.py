@@ -38,6 +38,6 @@ setup(
         '': [
             'scalafmt/conf/*',
             'scalafmt/scalafmt-*'
-            ]
-        }
+        ]
+    }
 )

@@ -7,11 +7,11 @@ import sys
 
 # Configure logging to write to a backup file.
 logging.basicConfig(
-        level=logging.DEBUG,
-        format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
-        datefmt='%m-%d %H:%M',
-        filename='/tmp/scalafmt.log',
-        filemode='a')
+    level=logging.DEBUG,
+    format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+    datefmt='%m-%d %H:%M',
+    filename='/tmp/scalafmt.log',
+    filemode='a')
 
 logger = logging.getLogger('scalafmt')
 
@@ -23,9 +23,11 @@ logger.addHandler(console)
 
 
 # Constants.
-default_scalafmt_version = '2.0.0' # Check scalafmt/README.md before modifying scalafmt version.
-default_scalafmt_conf = '.scalafmt.conf' # Expected scalafmt configuration file name.
-default_conf = 'default' # Default configuration file name.
+# Check scalafmt/README.md before modifying scalafmt version.
+default_scalafmt_version = '2.0.0'
+# Expected scalafmt configuration file name.
+default_scalafmt_conf = '.scalafmt.conf'
+default_conf = 'default'  # Default configuration file name.
 
 # Derived filepath constants.
 pre_commit_hooks_dir = os.path.dirname(os.path.realpath(__file__))
@@ -36,8 +38,10 @@ scalafmt_conf_dir = os.path.join(scalafmt_dir, 'conf')
 def scalafmt_kernel():
     """ Is this script running on Linux or MacOS? """
     import platform
-    if platform.system() == 'Darwin': return 'scalafmt-macos'
-    else: return 'scalafmt-linux'
+    if platform.system() == 'Darwin':
+        return 'scalafmt-macos'
+    else:
+        return 'scalafmt-linux'
 
 
 def get_conf_path(conf_name):
@@ -48,7 +52,8 @@ def get_conf_path(conf_name):
     conf_path = os.path.join(scalafmt_conf_dir, conf_file)
 
     if not os.path.exists(conf_path):
-        logger.error(f'Requested configuration file {conf_file} not recognized.')
+        logger.error(
+            f'Requested configuration file {conf_file} not recognized.')
         return None
     else:
         logger.debug(f'Found {conf_file} at {conf_path}')
@@ -67,7 +72,8 @@ def copy_conf_to(conf_path, target_dir, generated_conf_name):
 
     with open(output_conf_path, 'w') as outfile:
         outfile.write("# Automatically generated using pre-commit hooks.\n")
-        outfile.write("# Any manual changes to this file will be overwritten.\n")
+        outfile.write(
+            "# Any manual changes to this file will be overwritten.\n")
 
         from pyhocon import ConfigFactory
         from pyhocon.tool import HOCONConverter
@@ -79,9 +85,9 @@ def copy_conf_to(conf_path, target_dir, generated_conf_name):
 
 
 def generate_conf(conf_name, copy_conf, generated_conf_name):
-    """ Generate a conf file for consumption by scalafmt, named {generated_conf_name}.
-    If copy_conf is true, copy the generated file into the repo directory.
-    Otherwise copy it into /tmp. """
+    """ Generate a conf file for consumption by scalafmt, named
+    {generated_conf_name}. If copy_conf is true, copy the generated file
+    into the repo directory. Otherwise copy it into /tmp. """
 
     conf_path = get_conf_path(conf_name)
     repo_dir = os.getcwd()
@@ -119,7 +125,8 @@ def run_scalafmt(conf_path, scalafmt_version, filenames):
         raise Exception(f'Could not locate a scalafmt binary!')
 
     import subprocess
-    args = [scalafmt_bin_path, '--non-interactive', '-c', conf_path, '-i', '-f'] + filenames
+    args = [scalafmt_bin_path, '--non-interactive',
+            '-c', conf_path, '-i', '-f'] + filenames
     popen = subprocess.Popen(args, stdout=subprocess.PIPE)
     returncode = popen.wait()
     output = popen.stdout.read()
@@ -136,31 +143,31 @@ def cli_parser():
     parser = argparse.ArgumentParser(description='scalafmt pre-commit hook')
 
     parser.add_argument(
-            '--conf-name',
-            help='configuration file to use',
-            default=default_conf)
+        '--conf-name',
+        help='configuration file to use',
+        default=default_conf)
 
     parser.add_argument(
-            '--no-copy-conf',
-            help='do not copy .scalafmt.conf into the app directory',
-            action='store_false',
-            default='true',
-            dest='copy_conf')
+        '--no-copy-conf',
+        help='do not copy .scalafmt.conf into the app directory',
+        action='store_false',
+        default='true',
+        dest='copy_conf')
 
     parser.add_argument(
-            '--scalafmt-version',
-            help='scalafmt native version to use',
-            default=default_scalafmt_version)
+        '--scalafmt-version',
+        help='scalafmt native version to use',
+        default=default_scalafmt_version)
 
     parser.add_argument(
-            '--generated-conf-name',
-            help='name of the output scalafmt config file',
-            default=default_scalafmt_conf)
+        '--generated-conf-name',
+        help='name of the output scalafmt config file',
+        default=default_scalafmt_conf)
 
     parser.add_argument(
-            'filenames',
-            help='filename to execute scalafmt on',
-            nargs='+')
+        'filenames',
+        help='filename to execute scalafmt on',
+        nargs='+')
 
     return parser
 
@@ -175,18 +182,18 @@ def scalafmt():
     args = parser.parse_args()
 
     conf_path = generate_conf(
-            args.conf_name,
-            args.copy_conf,
-            args.generated_conf_name)
+        args.conf_name,
+        args.copy_conf,
+        args.generated_conf_name)
 
-    if not conf_path: return 1
+    if not conf_path:
+        return 1
 
     return run_scalafmt(
-            conf_path,
-            args.scalafmt_version,
-            args.filenames)
+        conf_path,
+        args.scalafmt_version,
+        args.filenames)
 
 
 if __name__ == '__main__':
     sys.exit(scalafmt())
-
