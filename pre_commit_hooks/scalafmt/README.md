@@ -52,7 +52,7 @@ For example if you add `conf/foo.conf` you need to update the scalafmt hook in `
 ```yaml
 ...
     - id: scalafmt
-        args: --conf-name=foo
+        args: [--conf-name=foo]
 ```
 
 The [default config file](conf/default.conf) intends to be a default that you can extend and make tweaks. Consider

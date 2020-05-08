@@ -15,8 +15,8 @@
 -   id: scalafmt
     name: scalafmt
     description: "Runs scalafmt scala formatter."
-    entry: pre_commit_hooks/scalafmt.sh
-    language: script
+    entry: scalafmt
+    language: python
     files: \.scala$
 
 -   id: scalastyle
