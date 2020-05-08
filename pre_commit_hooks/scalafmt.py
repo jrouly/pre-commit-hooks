@@ -61,8 +61,9 @@ def get_conf_path(conf_name):
 
 
 def copy_conf_to(from_path, target_path):
-    """ Resolve the requested configuration file with any included HOCON
-    dependencies. Copy the resulting configuration to the target path. """
+    """ Resolve the requested configuration file at {from_path}.
+    Read it into memory as HOCON, including any external 'includes'
+    references. Write the resulting config to {target_path}. """
 
     if os.path.exists(target_path):
         logger.debug(f'Callously overwriting existing config: {target_path}')
@@ -90,7 +91,7 @@ def generate_conf(conf_name, copy_conf, generated_conf_name):
         return None
     else:
         target_dir = os.getcwd() if copy_conf else pre_commit_hooks_dir
-        target_path = os.join(target_dir, generated_conf_name)
+        target_path = os.path.join(target_dir, generated_conf_name)
         copy_conf_to(conf_path, target_path)
 
 
