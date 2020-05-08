@@ -29,7 +29,7 @@ for CONF_FILE in "pre_commit_hooks/scalafmt/conf/"*.conf; do
     # Format them.
     for FILE in "$OUTPUT_DIR"/*; do
         echo "  └ $FILE" >&2
-        pre_commit_hooks/scalafmt.py --no-copy-conf "--conf-name=$CONF_NAME" "./$FILE" || \
+        python3 pre_commit_hooks/scalafmt.py --no-copy-conf "--conf-name=$CONF_NAME" "./$FILE" || \
           (echo "scalafmt.py failed, halting" >&2 && exit 1)
     done
 done
