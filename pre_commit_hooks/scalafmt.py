@@ -80,13 +80,15 @@ def generate_conf(conf_name, copy_conf, generated_conf_name):
     Otherwise copy it into /tmp. """
 
     conf_path = get_conf_path(conf_name)
+    repo_dir = os.getcwd()
 
     if conf_path is None:
         return None
     elif copy_conf:
-        return copy_conf_to(conf_path, os.getcwd(), generated_conf_name)
+        return copy_conf_to(conf_path, repo_dir, generated_conf_name)
     else:
-        return copy_conf_to(conf_path, '/tmp/', generated_conf_name)
+        repo_name = os.path.basename(repo_dir)
+        return copy_conf_to(conf_path, '/tmp/', f'{repo_name}-scalafmt.conf')
 
 
 def get_scalafmt_binary_path(scalafmt_version):
