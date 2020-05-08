@@ -1,4 +1,8 @@
-import logging, os, sys
+#!/usr/bin/env python3
+
+import logging
+import os
+import sys
 
 
 # Configure logging to write to a backup file.
