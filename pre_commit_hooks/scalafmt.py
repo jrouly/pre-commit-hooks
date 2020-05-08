@@ -90,20 +90,17 @@ def generate_conf(conf_name, copy_conf, generated_conf_name):
     into the repo directory. Otherwise copy it into /tmp. """
 
     conf_path = get_conf_path(conf_name)
-    repo_dir = os.getcwd()
 
     if conf_path is None:
         return None
-    elif copy_conf:
-        return copy_conf_to(conf_path, repo_dir, generated_conf_name)
     else:
-        repo_name = os.path.basename(repo_dir)
-        return copy_conf_to(conf_path, '/tmp/', f'{repo_name}-scalafmt.conf')
+        target_dir = os.getcwd() if copy_conf else pre_commit_hooks_dir
+        copy_conf_to(conf_path, target_dir, generated_conf_name)
 
 
 def get_scalafmt_binary_path(scalafmt_version):
     """ Checks that the required scalafmt native image exists.
-    TODO: Download the scalafmt binary if not already present.
+    If it doesn't, download the binary from github.
     """
 
     scalafmt_bin_filename = scalafmt_kernel() + '-' + scalafmt_version
