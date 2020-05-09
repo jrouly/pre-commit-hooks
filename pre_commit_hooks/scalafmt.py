@@ -87,7 +87,7 @@ def generate_conf(conf_path, copy_conf, generated_conf_name):
         from pyhocon.tool import HOCONConverter
 
         conf = ConfigFactory.parse_file(conf_path)
-        outfile.write(HOCONConverter.convert(conf, 'hocon'))
+        outfile.write(HOCONConverter.convert(conf, 'hocon') + '\n')
 
     return target_path
 
