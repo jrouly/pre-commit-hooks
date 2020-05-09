@@ -14,18 +14,19 @@ This hook executes [scalafmt](https://scalameta.org/scalafmt/) on your Scala cod
 
 # Installation
 
-You need to add `scalafmt` as a hook into your `.pre-commit-config`:
+Add `scalafmt` as a hook into your repo's `.pre-commit-config`:
+
 ```yaml
 - repo: git@github.com:AudaxHealthInc/pre-commit-hooks.git
   rev: vX.Y.Z
   hooks:
     - id: scalafmt
-      args: [--conf-name=default]
 ```
+
 # Configuration
 
 This hook supports:
-- [Rally default config](#default-configuration)
+- [Rally default config (`default.conf`)](#default-configuration)
 - [Solution specific configs](#solution-specific-configuration).
 
 | File | Description | Base |
@@ -36,7 +37,16 @@ This hook supports:
 | [`personalization.conf`](conf/personalization.conf) | Personalization solution's configuration. | [`default.conf`](conf/default.conf) |
 | [`scala-lang-org-style.conf`](conf/scala-lang-org-style.conf) | Configuration based on [Scala Lang's Style Guide](https://docs.scala-lang.org/style/). | |
 
-## Modifying exist configurations
+## Extending existing configurations
+
+If you like most of an existing configuration but would like to tweak it slightly without entirely duplicating it,
+consider using `includes`:
+
+```hocon
+include "default.conf"
+```
+
+## Modifying existing configurations
 
 Be _very_ careful when modifying existing configurations! Repositories are likely using that configuration, and if
 you update the configuration you might introduce unexpected changes to the users of that configuration -- few people
@@ -70,39 +80,17 @@ Bumping scalafmt version can have a significant impact on formatting due to bugf
 the version, be sure to update all configs that require changes to maintain existing behavior. Some formatting changes
 will be unavoidable, but try to ensure there are no major changes to the code style.
 
-[Scalafmt-native official releases started with 2.3.2](https://scalameta.org/scalafmt/docs/installation.html#native-image), so all earlier versions are unsupported by the download script.
-Older versions are pulled from here: https://github.com/mroth/scalafmt-native
+[`scalafmt.py`](../scalafmt.py) allows you to customize the version of `scalafmt-native` being used, like so:
 
-When you update `scalafmt` you should:
+```yaml
+...
+    - id: scalafmt
+        args: [--scalafmt-version=x.y.z]
+```
 
-1. Remove the old `scalafmt` versions [here](/), e.g.
-     ```shell
-     $ git rm scalafmt-*
-     rm 'pre_commit_hooks/scalafmt/scalafmt-*'
-     ```
-2. Open [scalafmt.sh](../scalafmt.sh)
-3. Update `SCALAFMT_VERSION` to the [new version](https://github.com/scalameta/scalafmt/releases)
-4. Update the `scalafmt` version in the [configuration files](conf), e.g.:
-    ```hocon
-    version = "x.y.z"
-    ```
-5. Run [`scalafmt-examples.sh`](../scalafmt-examples/README.md) to download the
-new version of `scalafmt`
-   ```shell
-   $ pre_commit_hooks/scalafmt-examples/scalafmt-examples.sh
-   Formatting with configuration pre_commit_hooks/scalafmt/conf/core.conf ...
-     └ pre_commit_hooks/scalafmt-examples/confs/core/WhitespaceIsLava.scala
-   Downloading scalafmt x.y.z ...
-   Wrote /.../pre-commit-hooks/pre_commit_hooks/scalafmt/scalafmt-x.y.z
-   Formatting with configuration pre_commit_hooks/scalafmt/conf/default.conf ...
-     └ pre_commit_hooks/scalafmt-examples/confs/default/WhitespaceIsLava.scala
-   ...
-   ```
-7. Add the new `scalafmt` versions to git, e.g.:
-    ```shell
-    $ git add scalafmt-*
-    ```
-8. Commit and push a PR
+**Caveat emptor**: `scalafmt-native` will refuse to consume config files with a different `version` key.
+If you would like to use version `x.y.z` of `scalafmt-native`, be _certain_ that the config file you are
+selecting specifies `version=x.y.z` as well.
 
 # Resources
 
