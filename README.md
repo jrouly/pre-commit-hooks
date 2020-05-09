@@ -59,17 +59,22 @@ Formats CSVs by applying a consistent quoting standard.
 ```yaml
     hooks:
     -   id: scalafmt
-        args: [--conf-name=default]
 ```
 
 ### Configuration
 
-The `args` block is optional. If present, pass the name of a config file stored in
-[`pre_commit_hooks/scalafmt/conf/`](pre_commit_hooks/scalafmt/conf). If it's not present, scalafmt will default to
-[default.conf](pre_commit_hooks/scalafmt/conf/default.conf).
+You may optionally pass supported arguments:
 
-Additional configuration files and information on modifying configurations files can be found
-[here](pre_commit_hooks/scalafmt/README.md).
+```yaml
+    hooks:
+    -   id: scalafmt
+        args: [--conf-name=foo, --no-copy-conf, --scalafmt-version=x.y.z, --generated-conf-name=bar.conf]
+```
+
+If `--conf-name` is not specified, the hook will use `default`.
+
+Additional configurations and information on modifying configuration files can be found in the
+[`scalafmt` hook readme](pre_commit_hooks/scalafmt/README.md).
 
 ### Intellij
 
@@ -77,9 +82,12 @@ Intellij [officially](https://www.jetbrains.com/help/idea/work-with-scala-format
 [plugin](https://plugins.jetbrains.com/plugin/8236-scalafmt). It is recommended to use this plugin to allow Intellij to
 format your code while you are working.
 
-When the pre-commit hooks runs [our script](pre_commit_hooks/scalafmt.sh) will copy the configuration to
+When the [`scalafmt` pre-commit hooks runs](pre_commit_hooks/scalafmt.py), it will copy the configuration to
 `/.scalafmt.conf` (overwriting the file if it exists). This is where the Intellij plugin expects the configuration file.
 Copying and overwriting ensures intellij and pre-commit are both formatting files the same way.
+
+Note: this file will not be created if you specify `--no-copy-conf`, and its file name can be
+modified using `--generated-conf-name`.
 
 ## scalariform
 
