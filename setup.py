@@ -20,7 +20,7 @@ setup(
     python_requires='>=3.6',
 
     # Package dependencies.
-    install_requires=['argparse', 'pyhocon'],
+    install_requires=['argparse', 'pyhocon', 'requests'],
 
     # These are the entry points for the various Python based pre-commit
     # hooks defined in this repo. The format is:
