@@ -72,6 +72,13 @@ def copy_conf_to(from_path, target_path):
         outfile.write(
             "# Any manual changes to this file will be overwritten.\n")
 
+        # This is really where the magic happens.
+        # Because scalafmt HOCON files support including arbitrary other
+        # HOCON files, we need a fairly robust parser. This pyhocon parser
+        # will resolve any 'include' statements as relative paths from the
+        # directory in which the config file resides. It then reads the
+        # entire configuration block into memory as {conf}. We can write
+        # this _back_ out to a .conf file anywhere we like.
         from pyhocon import ConfigFactory
         from pyhocon.tool import HOCONConverter
 
