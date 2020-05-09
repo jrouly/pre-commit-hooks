@@ -135,6 +135,10 @@ def download_scalafmt(scalafmt_version):
         unzipped_binary_path = os.path.join(temp_dir, 'scalafmt')
         os.rename(unzipped_binary_path, target_path)
 
+        # Set the execute permission bit on the binary.
+        import stat
+        os.chmod(target_path, stat.S_IEXEC)
+
     return target_path
 
 
