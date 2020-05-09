@@ -10,7 +10,7 @@ logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
     datefmt='%m-%d %H:%M',
-    filename='/tmp/scalafmt.log',
+    filename=os.path.join('/tmp', 'scalafmt.log'),
     filemode='a')
 
 logger = logging.getLogger('scalafmt')
@@ -59,18 +59,23 @@ def get_conf_path(conf_name):
         return conf_path
 
 
-def copy_conf_to(from_path, target_path):
-    """ Resolve the requested configuration file at {from_path}.
-    Read it into memory as HOCON, including any external 'includes'
-    references. Write the resulting config to {target_path}. """
+def generate_conf(conf_path, copy_conf, generated_conf_name):
+    """ Generate a conf file for consumption by scalafmt, named
+    {generated_conf_name}. If copy_conf is true, copy the generated file
+    into the repo directory. Otherwise copy it into the pre-commit cache. """
+
+    target_dir = os.getcwd() if copy_conf else pre_commit_hooks_dir
+    target_path = os.path.join(target_dir, generated_conf_name)
 
     if os.path.exists(target_path):
         logger.debug(f'Callously overwriting existing config: {target_path}')
 
     with open(target_path, 'w') as outfile:
-        outfile.write("# Automatically generated using pre-commit hooks.\n")
-        outfile.write(
-            "# Any manual changes to this file will be overwritten.\n")
+        preamble = \
+            '# DO NOT MODIFY THIS FILE\n' \
+            '# It was automatically generated using pre-commit hooks.\n' \
+            '# Any manual changes to this file will be overwritten.\n'
+        outfile.write(preamble)
 
         # This is really where the magic happens.
         # Because scalafmt HOCON files support including arbitrary other
@@ -82,18 +87,9 @@ def copy_conf_to(from_path, target_path):
         from pyhocon import ConfigFactory
         from pyhocon.tool import HOCONConverter
 
-        conf = ConfigFactory.parse_file(from_path)
+        conf = ConfigFactory.parse_file(conf_path)
         outfile.write(HOCONConverter.convert(conf, 'hocon'))
 
-
-def generate_conf(conf_path, copy_conf, generated_conf_name):
-    """ Generate a conf file for consumption by scalafmt, named
-    {generated_conf_name}. If copy_conf is true, copy the generated file
-    into the repo directory. Otherwise copy it into /tmp. """
-
-    target_dir = os.getcwd() if copy_conf else pre_commit_hooks_dir
-    target_path = os.path.join(target_dir, generated_conf_name)
-    copy_conf_to(conf_path, target_path)
     return target_path
 
 
