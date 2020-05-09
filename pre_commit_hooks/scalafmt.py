@@ -52,8 +52,7 @@ def get_conf_path(conf_name):
     conf_path = os.path.join(scalafmt_conf_dir, conf_file)
 
     if not os.path.exists(conf_path):
-        logger.error(
-            f'Requested configuration file {conf_file} not recognized.')
+        logger.error(f'Configuration file {conf_file} not recognized.')
         return None
     else:
         logger.debug(f'Found {conf_file} at {conf_path}')
@@ -80,20 +79,15 @@ def copy_conf_to(from_path, target_path):
         outfile.write(HOCONConverter.convert(conf, 'hocon'))
 
 
-def generate_conf(conf_name, copy_conf, generated_conf_name):
+def generate_conf(conf_path, copy_conf, generated_conf_name):
     """ Generate a conf file for consumption by scalafmt, named
     {generated_conf_name}. If copy_conf is true, copy the generated file
     into the repo directory. Otherwise copy it into /tmp. """
 
-    conf_path = get_conf_path(conf_name)
-
-    if conf_path is None:
-        return None
-    else:
-        target_dir = os.getcwd() if copy_conf else pre_commit_hooks_dir
-        target_path = os.path.join(target_dir, generated_conf_name)
-        copy_conf_to(conf_path, target_path)
-        return target_path
+    target_dir = os.getcwd() if copy_conf else pre_commit_hooks_dir
+    target_path = os.path.join(target_dir, generated_conf_name)
+    copy_conf_to(conf_path, target_path)
+    return target_path
 
 
 def get_scalafmt_binary_path(scalafmt_version):
@@ -176,13 +170,16 @@ def scalafmt():
     parser = cli_parser()
     args = parser.parse_args()
 
-    conf_path = generate_conf(
-        args.conf_name,
-        args.copy_conf,
-        args.generated_conf_name)
-
+    # Get the path to the conf file from pre_commit_hooks.
+    conf_path = get_conf_path(args.conf_name)
     if not conf_path:
         return 1
+
+    # Get the path to the generated conf file.
+    conf_path = generate_conf(
+        conf_path,
+        args.copy_conf,
+        args.generated_conf_name)
 
     return run_scalafmt(
         conf_path,
