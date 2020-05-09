@@ -8,3 +8,6 @@ __pycache__
 
 # Coursier cache (see pre_commit_hooks/scalafmt.sh)
 .cache/coursier/
+
+# Ignore the .scalafmt.conf copied in during scalafmt-examples
+pre_commit_hooks/.scalafmt.conf
