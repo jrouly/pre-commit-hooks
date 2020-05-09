@@ -97,6 +97,47 @@ def generate_conf(conf_path, copy_conf, generated_conf_name):
     return target_path
 
 
+def download_file(url, filename):
+    """ Stream a large file to disk.
+    https://stackoverflow.com/a/16696317/5494389 """
+
+    import requests
+    with requests.get(url, stream=True) as r:
+        r.raise_for_status()
+        with open(filename, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                f.write(chunk)
+
+
+def download_scalafmt(scalafmt_version):
+    """ Download a version of scalafmt-native and place it in the
+    {scalafmt_dir}. """
+
+    kernel = scalafmt_kernel()
+    url = 'https://github.com/scalameta/scalafmt/releases/download' \
+        f'/v{scalafmt_version}/{kernel}.zip'
+
+    filename = f'{kernel}-{scalafmt_version}'
+    target_path = os.path.join(scalafmt_dir, filename)
+
+    import tempfile
+    with tempfile.TemporaryDirectory() as temp_dir:
+        # Download the binary into a temporary path to unzip it.
+        download_path = os.path.join(temp_dir, 'scalafmt.zip')
+        download_file(url, download_path)
+
+        # Extract the 'scalafmt' member to {temp_dir}.
+        import zipfile
+        with zipfile.ZipFile(download_path, 'r') as archive:
+            archive.extract('scalafmt', temp_dir)
+
+        # Move the unzipped binary to its target destination.
+        unzipped_binary_path = os.path.join(temp_dir, 'scalafmt')
+        os.rename(unzipped_binary_path, target_path)
+
+    return target_path
+
+
 def get_scalafmt_binary_path(scalafmt_version):
     """ Checks that the required scalafmt native image exists.
     If it doesn't, download the binary from github.
@@ -109,8 +150,7 @@ def get_scalafmt_binary_path(scalafmt_version):
         logger.debug(f'Using existing scalafmt binary: {scalafmt_bin_path}')
         return scalafmt_bin_path
     else:
-        # TODO: Download the scalafmt binary instead.
-        return None
+        return download_scalafmt(scalafmt_version)
 
 
 def run_scalafmt(conf_path, scalafmt_version, filenames):
