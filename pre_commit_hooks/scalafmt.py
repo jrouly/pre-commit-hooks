@@ -23,11 +23,10 @@ logger.addHandler(console)
 
 
 # Constants.
-# Check scalafmt/README.md before modifying scalafmt version.
 default_scalafmt_version = '2.0.0'
-# Expected scalafmt configuration file name.
 default_scalafmt_conf = '.scalafmt.conf'
-default_conf = 'default'  # Default configuration file name.
+default_conf = 'default'
+
 
 # Derived filepath constants.
 pre_commit_hooks_dir = os.path.dirname(os.path.realpath(__file__))
@@ -117,8 +116,13 @@ def download_scalafmt(scalafmt_version):
     target_path = os.path.join(scalafmt_dir, filename)
 
     import tempfile
-    with tempfile.TemporaryDirectory() as temp_dir:
+    with tempfile.TemporaryDirectory(dir=scalafmt_dir) as temp_dir:
         # Download the binary into a temporary path to unzip it.
+        # Temporary directory is used because this script may be invoked
+        # several times in parallel and we don't want the downloads to step
+        # on one another's toes. The final {rename} step is atomic on Linux
+        # if the source and destination are both on the same disk - so the
+        # temporary directory is created in {scalafmt_dir}.
         download_path = os.path.join(temp_dir, 'scalafmt.zip')
         download_file(url, download_path)
 
@@ -157,8 +161,10 @@ def run_scalafmt(conf_path, scalafmt_version, filenames):
     """ Run scalafmt with the given parameters. """
 
     scalafmt_bin_path = get_scalafmt_binary_path(scalafmt_version)
+
     if not scalafmt_bin_path:
-        raise Exception(f'Could not locate a scalafmt binary!')
+        logger.error('Could not locate a scalafmt binary!')
+        return 1
 
     import subprocess
     args = [scalafmt_bin_path, '--non-interactive',
@@ -228,6 +234,7 @@ def scalafmt():
         args.copy_conf,
         args.generated_conf_name)
 
+    # Run scalafmt with the generated conf file.
     return run_scalafmt(
         conf_path,
         args.scalafmt_version,
