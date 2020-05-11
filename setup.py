@@ -35,7 +35,7 @@ setup(
     # If static data into this repo is necessary for hook operation, add it
     # here. Globbing is supported.
     package_data={
-        '': [
+        'pre_commit_hooks': [
             'scalafmt/conf/*',
             'scalafmt/scalafmt-*'
         ]

@@ -1,32 +1,16 @@
 #!/usr/bin/env python3
 
-import logging
+from . import pre_commit_hook_logger
 import os
 import sys
 
-
-# Configure logging to write to a backup file.
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
-    datefmt='%m-%d %H:%M',
-    filename=os.path.join('/tmp', 'scalafmt.log'),
-    filemode='a')
-
-logger = logging.getLogger('scalafmt')
-
-console = logging.StreamHandler()
-console.setLevel(logging.INFO)
-formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
-console.setFormatter(formatter)
-logger.addHandler(console)
-
+# Logging is configured in __init__.py.
+logger = pre_commit_hook_logger(os.path.basename(__file__))
 
 # Constants.
 default_scalafmt_version = '2.0.0'
 default_scalafmt_conf = '.scalafmt.conf'
 default_conf = 'default'
-
 
 # Derived filepath constants.
 pre_commit_hooks_dir = os.path.dirname(os.path.realpath(__file__))
@@ -216,9 +200,6 @@ def cli_parser():
 
 def scalafmt():
     """ Entry point. """
-    if sys.version_info[0] < 3:
-        print('Refusing to run on anything lower than Python 3.')
-        sys.exit(1)
 
     parser = cli_parser()
     args = parser.parse_args()

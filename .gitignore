@@ -10,4 +10,4 @@ __pycache__
 .cache/coursier/
 
 # Ignore the .scalafmt.conf copied in during scalafmt-examples
-pre_commit_hooks/.scalafmt.conf
+.scalafmt.conf
