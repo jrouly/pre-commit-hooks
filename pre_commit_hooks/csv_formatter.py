@@ -6,7 +6,7 @@ import os
 import sys
 
 
-def format_csv(file_obj, delimiter, quotechar, quoting):
+def format_csv(file_obj, delimiter, quotechar, quoting, verbose):
     """
     Consistently apply quoting in a csv file.
     """
@@ -24,7 +24,10 @@ def format_csv(file_obj, delimiter, quotechar, quoting):
         rows = [row for row in reader]
         file_obj.seek(0, 0)
         writer.writerows(rows)
-    except:
+    except Exception:
+        if verbose:
+            import traceback
+            traceback.print_exc()
         return 1
 
     return 0
@@ -35,6 +38,7 @@ def csv_formatter(argv=None):
     parser.add_argument('filenames', nargs='*', help='Filenames to quote')
     parser.add_argument('--delimiter', help='CSV delimiter', default=',')
     parser.add_argument('--quotechar', help='CSV quotechar', default='"')
+    parser.add_argument('--verbose', help='verbose logging', default=False, action='store_true')
     parser.add_argument(
         '--quoting', help='CSV quoting method', default=csv.QUOTE_ALL)
     args = parser.parse_args(argv)
@@ -45,7 +49,7 @@ def csv_formatter(argv=None):
         # Read as binary so we can read byte-by-byte
         with open(filename, 'rb+') as file_obj:
             ret_for_file = format_csv(
-                file_obj, args.delimiter, args.quotechar, args.quoting)
+                file_obj, args.delimiter, args.quotechar, args.quoting, args.verbose)
             if ret_for_file:
                 print('Quoting {0}'.format(filename))
             retv |= ret_for_file
