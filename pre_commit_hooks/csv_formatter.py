@@ -46,8 +46,7 @@ def csv_formatter(argv=None):
     retv = 0
 
     for filename in args.filenames:
-        # Read as binary so we can read byte-by-byte
-        with open(filename, 'rb+') as file_obj:
+        with open(filename, 'r+') as file_obj:
             ret_for_file = format_csv(
                 file_obj, args.delimiter, args.quotechar, args.quoting, args.verbose)
             if ret_for_file:
